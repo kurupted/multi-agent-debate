@@ -272,8 +272,11 @@
         }
 
         textarea.short {
-            height: 90px;
+            min-height: 180px;
+            height: 180px;
             resize: vertical;
+            line-height: 1.55;
+            padding: 12px 14px;
         }
 
         textarea.tall {
@@ -1127,17 +1130,24 @@
                     </svg>
                     <span>Question & Council Deliberation</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <label style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Domain Preset:</label>
                     <select id="presetSelect" onchange="applyPreset(this.value)" style="width: auto; padding: 5px 10px; font-size: 0.82rem;">
-                        <option value="medical">🩺 Medical & Pharmacology Hierarchy</option>
-                        <option value="software">💻 Software Architecture & Code Audit</option>
-                        <option value="business_pitch">🚀 Business Strategy, Ideation & Ventures</option>
-                        <option value="business_ops">📊 Operations, Workflows & Problem Solving</option>
-                        <option value="investing">📈 Investment & Due Diligence</option>
-                        <option value="legal">⚖️ Legal & Regulatory Policy</option>
-                        <option value="general">🧠 General Truth & Logic Arbiter</option>
+                        <option value="idea_summary">💡 Open Ideation &amp; Summary (Unfiltered)</option>
+                        <option value="business_pitch">🚀 Business Strategy, Ideation &amp; Ventures</option>
+                        <option value="business_ops">📊 Operations, Workflows &amp; Problem Solving</option>
+                        <option value="software">💻 Software Architecture &amp; Code Audit</option>
+                        <option value="investing">📈 Investment &amp; Due Diligence</option>
+                        <option value="medical">🩺 Medical &amp; Pharmacology Hierarchy</option>
+                        <option value="legal">⚖️ Legal &amp; Regulatory Policy</option>
+                        <option value="general">🧠 General Truth &amp; Logic Arbiter</option>
                     </select>
+                    <button type="button" class="btn-secondary btn-sm" onclick="promptSaveCustomPreset()" title="Save current prompt templates as a custom preset" style="padding: 5px 9px; font-size: 0.78rem;">
+                        💾 Save Preset
+                    </button>
+                    <button type="button" id="deletePresetBtn" class="btn-ghost btn-sm" onclick="deleteCurrentCustomPreset()" title="Delete this custom preset" style="display: none; color: var(--danger); padding: 5px 8px; font-size: 0.78rem;">
+                        🗑️ Delete
+                    </button>
                 </div>
             </div>
 
@@ -1159,6 +1169,20 @@
                     <span style="font-size: 0.75rem; color: var(--text-faint);">Click to expand</span>
                 </summary>
                 <div style="padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Arbiter Role Selection -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: var(--judge-gold); margin: 0 0 2px; display: flex; align-items: center; gap: 6px;">
+                                <span>👑 Round 3 Arbiter Role:</span>
+                            </label>
+                            <span style="font-size: 0.74rem; color: var(--text-muted);">Choose whether Round 3 summarizes &amp; combines all perspectives or acts as a selective judge</span>
+                        </div>
+                        <select id="arbiterModeSelect" onchange="setArbiterMode(this.value)" style="width: auto; padding: 4px 10px; font-size: 0.8rem;">
+                            <option value="combination">📋 Combination &amp; Comprehensive Summary (Default)</option>
+                            <option value="judge">⚖️ Decisive Judge (Pick Best &amp; Filter Out)</option>
+                        </select>
+                    </div>
+
                     <div>
                         <label style="font-size: 0.8rem;">System Prompt (Shared by Rounds 1 & 2):</label>
                         <textarea id="sysPrompt" class="tall"></textarea>
@@ -1170,6 +1194,14 @@
                     <div>
                         <label style="font-size: 0.8rem;">Round 3 Template (Chief Arbiter Synthesis):</label>
                         <textarea id="r3Template" class="tall"></textarea>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
+                        <button type="button" class="btn-ghost btn-sm" onclick="resetCurrentTemplatesToPreset()" title="Reset textareas back to current preset defaults" style="font-size: 0.78rem;">
+                            🔄 Reset to Defaults
+                        </button>
+                        <button type="button" class="btn-secondary btn-sm" onclick="promptSaveCustomPreset()" style="font-size: 0.78rem;">
+                            💾 Save as Custom Preset...
+                        </button>
                     </div>
                 </div>
             </details>
@@ -1542,6 +1574,86 @@ const MODEL_CATALOG = [
 
 // Domain Prompt Presets
 const DOMAIN_PRESETS = {
+    idea_summary: {
+        sysPrompt: `You are an objective, creative, and analytical brainstorming partner and researcher. Provide comprehensive ideas, perspectives, and potential solutions tailored to the user's inquiry, considering diverse angles and practical possibilities.`,
+        r2Template: `Business inquiry / topic to evaluate: "{QUERY}"
+
+Concepts already provided:
+{COUNCIL_RESPONSES_R1}
+
+Task: Cross-examine these ideas and provide your refined, highest-value recommendations.`,
+        r3Template: `This was a user's query: "{QUERY}"
+
+And here are the responses from a set of AIs:
+{COUNCIL_RESPONSES_R2}
+
+Task: Present all of the ideas in a comprehensive summary, ordered based on their strength and feasibility. Explicitly identify where there was agreement or disagreement among the models. Do NOT discard or filter out ideas simply because they were not the top choice—preserve all distinct possibilities so the user can review the full spectrum of options.`
+    },
+
+    business_pitch: {
+        sysPrompt: `You are an expert business strategist, entrepreneur, and venture advisor. Analyze the business idea, strategic question, pitch, or opportunity with commercial realism and creative problem-solving. Where appropriate and relevant to the user's inquiry, consider factors such as product-market fit, unit economics, automation potential, scalability, go-to-market distribution, and competitive advantage. Adapt your focus and depth directly to the nature of the query (e.g. brainstorming ideas, evaluating a concept, analyzing pricing, or critiquing a pitch).`,
+        r2Template: `Business inquiry / topic to evaluate: "{QUERY}"
+
+Independent strategic analyses were provided:
+{COUNCIL_RESPONSES_R1}
+
+Task: Cross-examine these perspectives. Pinpoint unexamined assumptions, overlooked opportunities, or practical friction points, and provide your refined, highest-value recommendations.`,
+        r3Template: `You are the Chief Business & Venture Arbiter evaluating: "{QUERY}"
+
+Here are the deliberations from the council members:
+{COUNCIL_RESPONSES_R2}
+
+Task: Deliver a comprehensive strategic synthesis. Summarize all viable ideas, business models, and strategic recommendations, ordered by strength and feasibility. Explicitly highlight where the council agreed and where perspectives diverged. Do not discard secondary ideas—preserve all distinct possibilities and outline practical next steps.`
+    },
+
+    business_ops: {
+        sysPrompt: `You are a Senior Operations Leader and Strategic Problem Solver. Analyze the business problem, operational challenge, workflow dilemma, or process efficiency query. Where appropriate, consider root causes, process bottlenecks, resource allocation, cost/margin impact, automation levers, and practical implementation trade-offs. Adapt your recommendations to the scale and context of the user's specific challenge.`,
+        r2Template: `Operational challenge to evaluate: "{QUERY}"
+
+Independent council analyses were submitted:
+{COUNCIL_RESPONSES_R1}
+
+Task: Cross-examine these diagnoses and proposed solutions. Identify hidden operational bottlenecks, implementation hurdles, or trade-offs, and deliver your refined, battle-tested recommendation.`,
+        r3Template: `You are the Chief Operating Officer (COO) and Strategic Arbiter evaluating: "{QUERY}"
+
+Here are the deliberations from the council members:
+{COUNCIL_RESPONSES_R2}
+
+Task: Deliver a comprehensive operational synthesis. Summarize all proposed solutions, root-cause analyses, and workflow optimizations, ordered by impact and feasibility. Detail points of agreement and disagreement among the models, preserving the full spectrum of operational options and trade-offs.`
+    },
+
+    software: {
+        sysPrompt: `You are a Principal Software Architect and Systems Engineer. Evaluate the technical problem, code, system architecture, or engineering inquiry. Where appropriate, evaluate trade-offs across scalability, security, maintainability, performance, simplicity, and operational complexity. Highlight trade-offs honestly without dogma, adapting your focus directly to what the user is asking.`,
+        r2Template: `Technical query: "{QUERY}"
+
+Independent engineering analyses were provided:
+{COUNCIL_RESPONSES_R1}
+
+Task: Critically review and cross-examine these solutions. Pinpoint edge cases, potential failure modes, or unnecessary complexity, and provide your refined recommendation.`,
+        r3Template: `You are the Chief Technical Arbiter and Staff Systems Architect evaluating: "{QUERY}"
+
+Here are the positions of each architect after cross-examination:
+{COUNCIL_RESPONSES_R2}
+
+Task: Deliver a comprehensive technical synthesis. Summarize all viable architectures and approaches proposed by the council, ordered by reliability and suitability. Detail points of consensus and technical disagreement, trade-offs of each approach, and actionable implementation guidance without discarding valid alternative designs.`
+    },
+
+    investing: {
+        sysPrompt: `You are a Senior Investment Strategist and Financial Analyst. Analyze the financial query, asset, market trend, or investment thesis with empirical rigor. Where appropriate, consider fundamental valuation, macroeconomic drivers, competitive positioning, risk-reward asymmetry, and cash flow dynamics. Adapt your analysis to the specific scenario or asset class queried.`,
+        r2Template: `Investment query / topic: "{QUERY}"
+
+Independent analyst reports were produced:
+{COUNCIL_RESPONSES_R1}
+
+Task: Cross-examine assumptions, valuation rationales, and risk factors. Identify blind spots, over-optimistic projections, or asymmetric tail risks, and provide your revised thesis.`,
+        r3Template: `You are the Chief Investment Officer and Arbitrating Committee Chair evaluating: "{QUERY}"
+
+Here are the deliberations of the senior analysts:
+{COUNCIL_RESPONSES_R2}
+
+Task: Synthesize a comprehensive, multi-scenario investment summary. Present all proposed investment theses, valuation ranges, and asset perspectives, ordered by risk-adjusted strength. Clearly contrast areas of analyst consensus vs divergence, preserving both bull, bear, and alternative scenarios without discarding differing theses.`
+    },
+
     medical: {
         sysPrompt: `You are an expert clinical pharmacologist and medical researcher. Evaluate the clinical, pharmacological, or health inquiry. When assessing efficacy, mechanisms, or safety, apply an evidence hierarchy where appropriate:
 Tier 1 (Highest Weight): Human randomized controlled trials (RCTs), systematic reviews, and meta-analyses.
@@ -1560,71 +1672,7 @@ Task: Identify contradictions, factual errors, or overstatements, but don't list
 Here are the positions of each council member after cross-critique:
 {COUNCIL_RESPONSES_R2}
 
-Task: Synthesize a clear, evidence-graded consensus. Distinguish established clinical findings from theoretical possibilities where applicable, note key agreements or divergences across council members, and provide balanced guidance.`
-    },
-
-    software: {
-        sysPrompt: `You are a Principal Software Architect and Systems Engineer. Evaluate the technical problem, code, system architecture, or engineering inquiry. Where appropriate, evaluate trade-offs across scalability, security, maintainability, performance, simplicity, and operational complexity. Highlight trade-offs honestly without dogma, adapting your focus directly to what the user is asking.`,
-        r2Template: `Technical query: "{QUERY}"
-
-Independent engineering analyses were provided:
-{COUNCIL_RESPONSES_R1}
-
-Task: Critically review and cross-examine these solutions. Pinpoint edge cases, potential failure modes, or unnecessary complexity, and provide your refined recommendation.`,
-        r3Template: `You are the Chief Technical Arbiter and Staff Systems Architect evaluating: "{QUERY}"
-
-Here are the positions of each architect after cross-examination:
-{COUNCIL_RESPONSES_R2}
-
-Task: Deliver a definitive technical synthesis tailored to the user's prompt. Detail consensus recommendations, key trade-offs, potential pitfalls to avoid, and concrete implementation guidance.`
-    },
-
-    business_pitch: {
-        sysPrompt: `You are an expert business strategist, entrepreneur, and venture advisor. Analyze the business idea, strategic question, pitch, or opportunity with commercial realism and creative problem-solving. Where appropriate and relevant to the user's inquiry, consider factors such as product-market fit, unit economics, automation potential, scalability, go-to-market distribution, and competitive advantage. Adapt your focus and depth directly to the nature of the query (e.g. brainstorming ideas, evaluating a concept, analyzing pricing, or critiquing a pitch).`,
-        r2Template: `Business inquiry / topic to evaluate: "{QUERY}"
-
-Independent strategic analyses were provided:
-{COUNCIL_RESPONSES_R1}
-
-Task: Cross-examine these perspectives. Pinpoint unexamined assumptions, overlooked opportunities, or practical friction points, and provide your refined, highest-value recommendations.`,
-        r3Template: `You are the Chief Business & Venture Arbiter evaluating: "{QUERY}"
-
-Here are the deliberations from the council members:
-{COUNCIL_RESPONSES_R2}
-
-Task: Deliver an authoritative, synthesized strategic verdict tailored directly to the user's prompt. Clearly highlight the strongest ideas or recommendations, address trade-offs and viability where appropriate, and outline practical next steps or key success factors.`
-    },
-
-    business_ops: {
-        sysPrompt: `You are a Senior Operations Leader and Strategic Problem Solver. Analyze the business problem, operational challenge, workflow dilemma, or process efficiency query. Where appropriate, consider root causes, process bottlenecks, resource allocation, cost/margin impact, automation levers, and practical implementation trade-offs. Adapt your recommendations to the scale and context of the user's specific challenge.`,
-        r2Template: `Operational challenge to evaluate: "{QUERY}"
-
-Independent council analyses were submitted:
-{COUNCIL_RESPONSES_R1}
-
-Task: Cross-examine these diagnoses and proposed solutions. Identify hidden operational bottlenecks, implementation hurdles, or trade-offs, and deliver your refined, battle-tested recommendation.`,
-        r3Template: `You are the Chief Operating Officer (COO) and Strategic Arbiter evaluating: "{QUERY}"
-
-Here are the deliberations from the council members:
-{COUNCIL_RESPONSES_R2}
-
-Task: Deliver the definitive operational synthesis tailored to the user's inquiry. Summarize core insights, highlight the highest-leverage actions or interventions, address trade-offs where appropriate, and provide a clear, pragmatic execution roadmap.`
-    },
-
-    investing: {
-        sysPrompt: `You are a Senior Investment Strategist and Financial Analyst. Analyze the financial query, asset, market trend, or investment thesis with empirical rigor. Where appropriate, consider fundamental valuation, macroeconomic drivers, competitive positioning, risk-reward asymmetry, and cash flow dynamics. Adapt your analysis to the specific scenario or asset class queried.`,
-        r2Template: `Investment query / topic: "{QUERY}"
-
-Independent analyst reports were produced:
-{COUNCIL_RESPONSES_R1}
-
-Task: Cross-examine assumptions, valuation rationales, and risk factors. Identify blind spots, over-optimistic projections, or asymmetric tail risks, and provide your revised thesis.`,
-        r3Template: `You are the Chief Investment Officer and Arbitrating Committee Chair evaluating: "{QUERY}"
-
-Here are the deliberations of the senior analysts:
-{COUNCIL_RESPONSES_R2}
-
-Task: Synthesize an actionable investment verdict tailored to the query. Balance upside drivers and downside risks, highlight areas of analyst consensus or divergence, and outline prudent next steps or key metrics to monitor.`
+Task: Synthesize a clear, comprehensive consensus. Detail points of agreement and key clinical debates/disagreements across the models. Present all viable options and considerations graded by the evidence hierarchy, explicitly distinguishing proven clinical outcomes from theoretical risks without discarding non-top options.`
     },
 
     legal: {
@@ -1640,7 +1688,7 @@ Task: Identify legal vulnerabilities, misapplied principles, or jurisdictional o
 Here are the revised briefs from council members:
 {COUNCIL_RESPONSES_R2}
 
-Task: Deliver an authoritative, balanced synthesis of legal principles, exposure points, and pragmatic risk mitigation strategies tailored to the user's question.`
+Task: Deliver a comprehensive legal synthesis. Summarize all legal theories, exposure risks, and statutory interpretations raised by council members. Detail points of consensus and jurisprudential disagreement, preserving alternative legal avenues and practical mitigation strategies.`
     },
 
     general: {
@@ -1656,7 +1704,7 @@ Task: Spot errors, unsupported assumptions, or incomplete logic. Provide your re
 Final deliberations:
 {COUNCIL_RESPONSES_R2}
 
-Task: Deliver the ultimate synthesized consensus, clearly noting unanimous agreements, remaining open debates, and the balance of evidence.`
+Task: Deliver a comprehensive synthesized summary. Present all distinct perspectives and answers, ordered by logical strength and factual backing. Clearly highlight where the models agreed, where they disagreed, and the comparative merits of each position without discarding alternative viewpoints.`
     }
 };
 
@@ -1664,7 +1712,8 @@ Task: Deliver the ultimate synthesized consensus, clearly noting unanimous agree
 const STORAGE = {
     KEY_SESSIONS: "ai_council_sessions_v2",
     KEY_SETTINGS: "ai_council_settings_v2",
-    KEY_API: "ai_council_openrouter_api_key"
+    KEY_API: "ai_council_openrouter_api_key",
+    KEY_CUSTOM_PRESETS: "ai_council_custom_presets_v1"
 };
 
 // Initial Default State
@@ -1679,7 +1728,8 @@ let appSettings = {
         model: "x-ai/grok-4.7",
         color: "#ec4899"
     },
-    activePreset: "medical"
+    activePreset: "idea_summary",
+    arbiterMode: "combination"
 };
 
 let sessions = [];
@@ -1698,6 +1748,7 @@ let selectedFollowupTarget = "judge";
 window.addEventListener("DOMContentLoaded", () => {
     loadSettingsFromStorage();
     loadSessionsFromStorage();
+    renderPresetDropdown();
     setupTemplates(appSettings.activePreset);
     renderActiveCouncilChips();
     renderFollowUpTargetPills();
@@ -1829,6 +1880,7 @@ function loadSettingsFromStorage() {
             if (parsed.council && parsed.council.length >= 2) appSettings.council = parsed.council;
             if (parsed.judge) appSettings.judge = parsed.judge;
             if (parsed.activePreset) appSettings.activePreset = parsed.activePreset;
+            if (parsed.arbiterMode) appSettings.arbiterMode = parsed.arbiterMode;
         }
 
         const savedApiKey = localStorage.getItem(STORAGE.KEY_API);
@@ -1902,19 +1954,191 @@ function toggleApiKeyVisibility() {
     }
 }
 
+function getPresetDisplayName(k) {
+    const names = {
+        idea_summary: "💡 Open Ideation & Summary (Unfiltered)",
+        business_pitch: "🚀 Business Strategy, Ideation & Ventures",
+        business_ops: "📊 Operations, Workflows & Problem Solving",
+        software: "💻 Software Architecture & Code Audit",
+        investing: "📈 Investment & Due Diligence",
+        medical: "🩺 Medical & Pharmacology Hierarchy",
+        legal: "⚖️ Legal & Regulatory Policy",
+        general: "🧠 General Truth & Logic Arbiter"
+    };
+    return names[k] || k;
+}
+
+function getCustomPresets() {
+    try {
+        const raw = localStorage.getItem(STORAGE.KEY_CUSTOM_PRESETS);
+        return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveCustomPresets(presets) {
+    try {
+        localStorage.setItem(STORAGE.KEY_CUSTOM_PRESETS, JSON.stringify(presets));
+    } catch (e) {
+        console.error("Failed to save custom presets:", e);
+    }
+}
+
+function renderPresetDropdown() {
+    const select = document.getElementById("presetSelect");
+    if (!select) return;
+    const currentVal = appSettings.activePreset || "idea_summary";
+
+    select.innerHTML = "";
+
+    // Built-in group
+    const builtInGroup = document.createElement("optgroup");
+    builtInGroup.label = "Built-in Presets";
+
+    const builtInKeys = Object.keys(DOMAIN_PRESETS);
+    builtInKeys.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = getPresetDisplayName(k);
+        if (k === currentVal) opt.selected = true;
+        builtInGroup.appendChild(opt);
+    });
+    select.appendChild(builtInGroup);
+
+    // Custom group
+    const custom = getCustomPresets();
+    const customKeys = Object.keys(custom);
+    if (customKeys.length > 0) {
+        const customGroup = document.createElement("optgroup");
+        customGroup.label = "Custom Presets";
+        customKeys.forEach(k => {
+            const opt = document.createElement("option");
+            opt.value = k;
+            opt.textContent = `⭐ ${custom[k].name}`;
+            if (k === currentVal) opt.selected = true;
+            customGroup.appendChild(opt);
+        });
+        select.appendChild(customGroup);
+    }
+
+    const deleteBtn = document.getElementById("deletePresetBtn");
+    if (deleteBtn) {
+        deleteBtn.style.display = custom[currentVal] ? "inline-flex" : "none";
+    }
+
+    const arbiterSelect = document.getElementById("arbiterModeSelect");
+    if (arbiterSelect) {
+        arbiterSelect.value = appSettings.arbiterMode || "combination";
+    }
+}
+
 function setupTemplates(presetKey) {
-    const preset = DOMAIN_PRESETS[presetKey] || DOMAIN_PRESETS.medical;
-    document.getElementById("presetSelect").value = presetKey;
-    document.getElementById("sysPrompt").value = preset.sysPrompt;
-    document.getElementById("r2Template").value = preset.r2Template;
-    document.getElementById("r3Template").value = preset.r3Template;
+    const custom = getCustomPresets();
+    const preset = custom[presetKey] || DOMAIN_PRESETS[presetKey] || DOMAIN_PRESETS.idea_summary || DOMAIN_PRESETS.general;
+
+    const select = document.getElementById("presetSelect");
+    if (select) select.value = presetKey;
+
+    const sysEl = document.getElementById("sysPrompt");
+    const r2El = document.getElementById("r2Template");
+    const r3El = document.getElementById("r3Template");
+
+    if (sysEl) sysEl.value = preset.sysPrompt;
+    if (r2El) r2El.value = preset.r2Template;
+    if (r3El) r3El.value = preset.r3Template;
+
+    const deleteBtn = document.getElementById("deletePresetBtn");
+    if (deleteBtn) {
+        deleteBtn.style.display = custom[presetKey] ? "inline-flex" : "none";
+    }
 }
 
 function applyPreset(presetKey) {
-    setupTemplates(presetKey);
     appSettings.activePreset = presetKey;
+    setupTemplates(presetKey);
     saveSettingsToStorage();
-    showToast(`Applied preset: ${presetKey.toUpperCase()}`);
+    const custom = getCustomPresets();
+    const name = custom[presetKey] ? custom[presetKey].name : getPresetDisplayName(presetKey);
+    showToast(`Applied preset: ${name}`);
+    const deleteBtn = document.getElementById("deletePresetBtn");
+    if (deleteBtn) {
+        deleteBtn.style.display = custom[presetKey] ? "inline-flex" : "none";
+    }
+}
+
+function promptSaveCustomPreset() {
+    const currentPreset = appSettings.activePreset;
+    const custom = getCustomPresets();
+    const defaultName = custom[currentPreset] ? custom[currentPreset].name : "My Custom Preset";
+
+    const name = prompt("Enter a name for this custom preset:", defaultName);
+    if (!name || !name.trim()) return;
+
+    const trimmedName = name.trim();
+    let id = (custom[currentPreset] && custom[currentPreset].name === trimmedName)
+        ? currentPreset
+        : "custom_" + Date.now();
+
+    custom[id] = {
+        name: trimmedName,
+        sysPrompt: document.getElementById("sysPrompt").value,
+        r2Template: document.getElementById("r2Template").value,
+        r3Template: document.getElementById("r3Template").value,
+        arbiterMode: appSettings.arbiterMode || "combination"
+    };
+
+    saveCustomPresets(custom);
+    appSettings.activePreset = id;
+    saveSettingsToStorage();
+    renderPresetDropdown();
+    showToast(`Saved preset "${trimmedName}"!`);
+}
+
+function deleteCurrentCustomPreset() {
+    const currentPreset = appSettings.activePreset;
+    const custom = getCustomPresets();
+    if (!custom[currentPreset]) return;
+
+    if (!confirm(`Are you sure you want to delete the preset "${custom[currentPreset].name}"?`)) {
+        return;
+    }
+
+    const deletedName = custom[currentPreset].name;
+    delete custom[currentPreset];
+    saveCustomPresets(custom);
+    appSettings.activePreset = "idea_summary";
+    setupTemplates("idea_summary");
+    saveSettingsToStorage();
+    renderPresetDropdown();
+    showToast(`Deleted preset "${deletedName}"`);
+}
+
+function resetCurrentTemplatesToPreset() {
+    setupTemplates(appSettings.activePreset || "idea_summary");
+    showToast("Reset templates to preset defaults.");
+}
+
+function setArbiterMode(mode) {
+    appSettings.arbiterMode = mode;
+    saveSettingsToStorage();
+
+    const r3El = document.getElementById("r3Template");
+    if (!r3El) return;
+
+    let current = r3El.value;
+
+    const combinationTask = `Task: Present all of the ideas in a comprehensive summary, ordered based on their strength and feasibility. Explicitly identify where there was agreement or disagreement among the models. Do NOT discard or filter out ideas simply because they were not the top choice—preserve all distinct possibilities so the user can review the full spectrum of options.`;
+
+    const decisiveTask = `Task: Act as a decisive Chief Arbiter. Critically evaluate all council proposals, filter out weaker or redundant arguments, and select the single best recommendation or verdict. Explicitly explain why other options were eliminated, making an authoritative final ruling.`;
+
+    if (/Task:[\s\S]*$/i.test(current)) {
+        r3El.value = current.replace(/Task:[\s\S]*$/i, mode === "judge" ? decisiveTask : combinationTask);
+    } else {
+        r3El.value = current.trim() + "\n\n" + (mode === "judge" ? decisiveTask : combinationTask);
+    }
+
+    showToast(`Arbiter mode: ${mode === 'judge' ? 'Decisive Judge' : 'Comprehensive Combination'}`);
 }
 
 async function callOpenRouter(apiKey, model, systemPrompt, userPrompt, signal = null) {
