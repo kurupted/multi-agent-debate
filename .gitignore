@@ -1,0 +1,14 @@
+﻿# Sensitive API Keys & Config
+.env
+.env.local
+*.key
+key.txt
+api_key.txt
+openrouter_key.txt
+config.json
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
