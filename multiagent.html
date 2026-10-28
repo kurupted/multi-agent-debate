@@ -4429,17 +4429,65 @@ function renderActiveCouncilChips() {
     container.innerHTML = html;
 }
 
+function renderStepper(activeStep = 1) {
+    const container = document.getElementById("stepperContainer");
+    if (!container) return;
+
+    const rounds = appSettings.allAgentRounds || 2;
+    const steps = [];
+
+    steps.push({ num: 1, label: "Blind Analysis" });
+    if (rounds >= 2) {
+        steps.push({ num: 2, label: "Cross-Critique" });
+    }
+    if (rounds >= 3) {
+        steps.push({ num: 3, label: "Revised Conclusion" });
+    }
+
+    const arbiterStepNum = steps.length + 1;
+    steps.push({ num: arbiterStepNum, label: "Final Arbiter Verdict" });
+
+    const followupStepNum = arbiterStepNum + 1;
+    steps.push({ num: followupStepNum, label: "Follow-Up Q&A" });
+
+    let html = "";
+    steps.forEach((step, idx) => {
+        const isCompleted = step.num < activeStep;
+        const isActive = step.num === activeStep;
+        const stateClass = isCompleted ? "completed" : (isActive ? "active" : "");
+
+        html += `
+            <div class="step-item ${stateClass}" id="step${step.num}">
+                <span class="step-num">${step.num}</span>
+                <span>${step.label}</span>
+            </div>
+        `;
+        if (idx < steps.length - 1) {
+            html += `<div class="step-divider"></div>`;
+        }
+    });
+
+    container.innerHTML = html;
+}
+
 function setStepperStep(stepNum) {
-    for (let i = 1; i <= 4; i++) {
-        const el = document.getElementById(`step${i}`);
-        if (!el) continue;
+    const container = document.getElementById("stepperContainer");
+    if (!container) return;
+    const items = container.querySelectorAll(".step-item");
+    if (items.length === 0) {
+        renderStepper(stepNum);
+        return;
+    }
+    items.forEach(el => {
+        const id = el.id || "";
+        const num = parseInt(id.replace("step", ""), 10);
         el.classList.remove("active", "completed");
-        if (i < stepNum) {
+        if (num < stepNum) {
             el.classList.add("completed");
-        } else if (i === stepNum) {
+        } else if (num === stepNum) {
             el.classList.add("active");
         }
-    }
+    });
 }
 
 function startDebateTimer() {
