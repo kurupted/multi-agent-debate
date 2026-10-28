@@ -1,4 +1,4 @@
-﻿# AI Council: Multi-Agent Debate & Consensus Engine (v1.0)
+# AI Council: Multi-Agent Debate & Consensus Engine (v1.0)
 
 > Poses your query to multiple AI models who independently analyze, cross-critique each other's arguments, and produce an evidence-based consensus verdict.
 
@@ -11,18 +11,23 @@
 
 **AI Council** is a 100% client-side web application designed to counter single-model bias, hallucinations, and blind spots. By orchestrating a structured multi-round debate among diverse frontier and open-weight LLMs via [OpenRouter](https://openrouter.ai), it extracts nuanced, battle-tested answers to complex questions.
 
-### 🏛️ The 3-Round Council Architecture
+### 🏛️ The Council Deliberation Architecture
 
 1. **Round 1 — Blind Independent Analysis:** Council members (e.g., Gemini, Claude, GPT, Nemotron) generate their initial stances in parallel without seeing other models' responses.
-2. **Round 2 — Peer Cross-Critique:** All Round 1 perspectives are compiled and fed back to each council member, who cross-examine the arguments, identify flaws or unproven assumptions, and refine their conclusions.
-3. **Round 3 — Chief Arbiter Synthesis:** A designated Judge model (e.g., Grok, Claude Opus, Gemini Argon) evaluates all peer critiques, separates facts from speculation, and synthesizes the definitive consensus verdict.
-4. **Interactive Follow-Up:** Interrogate the council or converse directly with specific agents or the Judge to probe specific details.
+2. **Round 2 — Peer Cross-Critique:** All Round 1 perspectives are compiled and fed back to each council member, who cross-examine peer arguments, identify flaws or unproven assumptions, and refine their positions.
+3. **Round 3 (Optional) — Review & Revised Conclusions:** All council members review the full body of deliberation so far, synthesize learnings from the critique round, and establish updated, high-confidence conclusions.
+4. **Final Round — Chief Arbiter Synthesis:** A designated Arbiter model (e.g., Grok, Claude Opus, Gemini Argon) evaluates all agent findings and synthesizes the definitive verdict. Users can toggle between:
+   - **Combination Summary:** Unifies valid insights and highlights complementary nuances.
+   - **Decisive Judge:** Selects the single strongest argument and resolves disagreements.
+5. **Interactive Follow-Up:** Interrogate the council or converse directly with specific agents or the Judge to probe specific details.
 
 ---
 
 ## ✨ Features
 
 - **100% Client-Side & Private:** No backend servers, no analytics, and no database. All API calls go directly from your browser to OpenRouter.
+- **Configurable All-Agent Rounds:** Choose 1, 2, or 3 all-agent deliberation rounds before the final arbiter verdict.
+- **Full Preset Manager:** Manage, edit, duplicate, and customize all built-in and user-created presets. Configure per-preset all-agent rounds, arbiter modes, system prompts, and round templates. Built-in presets can be edited and restored to defaults anytime.
 - **Model Flexibility:** Choose from pre-configured council lineups (Heavy Reasoning, Speed & Economy, Top Open-Weight, Free $0/M tokens) or plug in any model available on OpenRouter.
 - **Automatic Display Names:** Member names and Judge roles automatically adapt as you change models in settings.
 - **Domain Presets:**

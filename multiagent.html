@@ -405,6 +405,12 @@
             border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
+        .round-badge.r3-badge {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
         .round-badge.judge-badge {
             background: rgba(245, 158, 11, 0.15);
             color: var(--judge-gold);
@@ -1035,6 +1041,152 @@
             background: rgba(255, 255, 255, 0.12);
         }
 
+        /* Preset Manager Modal Dialog & Body */
+        .pm-modal-dialog {
+            max-width: 980px;
+            width: 95vw;
+            height: 88vh;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .pm-modal-body {
+            flex: 1;
+            min-height: 0;
+            height: 100%;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 18px;
+            padding: 16px 20px;
+        }
+
+        .pm-sidebar {
+            width: 310px;
+            min-width: 280px;
+            max-width: 330px;
+            height: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-right: 1px solid var(--border);
+            padding-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .pm-presets-list {
+            flex: 1;
+            min-height: 0;
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 6px;
+        }
+
+        .pm-editor-panel {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding-right: 12px;
+            padding-left: 2px;
+        }
+
+        /* Preset Manager scrollbars */
+        .pm-presets-list::-webkit-scrollbar,
+        .pm-editor-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .pm-presets-list::-webkit-scrollbar-track,
+        .pm-editor-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+        }
+
+        .pm-presets-list::-webkit-scrollbar-thumb,
+        .pm-editor-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.16);
+            border-radius: 4px;
+        }
+
+        .pm-presets-list::-webkit-scrollbar-thumb:hover,
+        .pm-editor-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.4);
+        }
+
+        .pm-preset-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .pm-preset-item:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--primary-light);
+        }
+
+        .pm-preset-item.active {
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.12);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+        }
+
+        .pm-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pm-badge-builtin {
+            background: rgba(148, 163, 184, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .pm-badge-custom {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .pm-badge-modified {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .pm-badge-rounds {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .app-header {
@@ -1142,7 +1294,18 @@
                         <option value="legal">⚖️ Legal &amp; Regulatory Policy</option>
                         <option value="general">🧠 General Truth &amp; Logic Arbiter</option>
                     </select>
-                    <button type="button" class="btn-secondary btn-sm" onclick="promptSaveCustomPreset()" title="Save current prompt templates as a custom preset" style="padding: 5px 9px; font-size: 0.78rem;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label style="margin: 0; font-size: 0.78rem; color: var(--text-muted);" title="How many deliberation rounds all council members participate in before the Final Round Arbiter">All-Agent Rounds:</label>
+                        <select id="allAgentRoundsSelect" onchange="setAllAgentRounds(this.value)" style="width: auto; padding: 5px 8px; font-size: 0.78rem;">
+                            <option value="2">2 Rounds (Initial + Critique)</option>
+                            <option value="3">3 Rounds (Initial + Critique + Conclusion)</option>
+                            <option value="1">1 Round (Initial Only)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-secondary btn-sm" onclick="openPresetManagerModal()" title="Manage and edit all debate presets" style="padding: 5px 9px; font-size: 0.78rem;">
+                        ⚙️ Manage Presets
+                    </button>
+                    <button type="button" class="btn-secondary btn-sm" onclick="promptSaveCustomPreset()" title="Save current prompt templates as a preset" style="padding: 5px 9px; font-size: 0.78rem;">
                         💾 Save Preset
                     </button>
                     <button type="button" id="deletePresetBtn" class="btn-ghost btn-sm" onclick="deleteCurrentCustomPreset()" title="Delete this custom preset" style="display: none; color: var(--danger); padding: 5px 8px; font-size: 0.78rem;">
@@ -1165,7 +1328,7 @@
             <!-- Collapsible Prompt Templates -->
             <details style="background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 16px;">
                 <summary style="padding: 10px 14px; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
-                    <span>Customize Round 1, 2 & 3 Prompt Templates</span>
+                    <span>Customize Debate Prompt Templates</span>
                     <span style="font-size: 0.75rem; color: var(--text-faint);">Click to expand</span>
                 </summary>
                 <div style="padding: 14px; display: flex; flex-direction: column; gap: 10px;">
@@ -1173,9 +1336,9 @@
                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm);">
                         <div>
                             <label style="font-size: 0.8rem; font-weight: 600; color: var(--judge-gold); margin: 0 0 2px; display: flex; align-items: center; gap: 6px;">
-                                <span>👑 Round 3 Arbiter Role:</span>
+                                <span>👑 Final Round Arbiter Role:</span>
                             </label>
-                            <span style="font-size: 0.74rem; color: var(--text-muted);">Choose whether Round 3 summarizes &amp; combines all perspectives or acts as a selective judge</span>
+                            <span style="font-size: 0.74rem; color: var(--text-muted);">Choose whether the Final Round summarizes &amp; combines all perspectives or acts as a selective judge</span>
                         </div>
                         <select id="arbiterModeSelect" onchange="setArbiterMode(this.value)" style="width: auto; padding: 4px 10px; font-size: 0.8rem;">
                             <option value="combination">📋 Combination &amp; Comprehensive Summary (Default)</option>
@@ -1183,21 +1346,43 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label style="font-size: 0.8rem;">System Prompt (Shared by Rounds 1 & 2):</label>
+                    <!-- All-Agent Rounds Selection -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: var(--accent); margin: 0 0 2px; display: flex; align-items: center; gap: 6px;">
+                                <span>🔄 All-Agent Deliberation Rounds:</span>
+                            </label>
+                            <span style="font-size: 0.74rem; color: var(--text-muted);">Configure how many rounds all council members participate in before the Final Round Arbiter</span>
+                        </div>
+                        <select id="collapsibleAllAgentRoundsSelect" onchange="setAllAgentRounds(this.value)" style="width: auto; padding: 4px 10px; font-size: 0.8rem;">
+                            <option value="2">2 Rounds: Initial Feedback + Cross-Critique (Standard)</option>
+                            <option value="3">3 Rounds: Initial Feedback + Cross-Critique + Revised Conclusion</option>
+                            <option value="1">1 Round: Initial Feedback Only</option>
+                        </select>
+                    </div>
+
+                    <div id="sysPromptGroup">
+                        <label style="font-size: 0.8rem;">System Prompt (Shared by all council members):</label>
                         <textarea id="sysPrompt" class="tall"></textarea>
                     </div>
-                    <div>
-                        <label style="font-size: 0.8rem;">Round 2 Template (Cross-Critique & Anonymized Review):</label>
+                    <div id="r2TemplateGroup">
+                        <label style="font-size: 0.8rem;">Round 2 Template (Cross-Critique &amp; Anonymized Review):</label>
                         <textarea id="r2Template" class="tall"></textarea>
                     </div>
-                    <div>
-                        <label style="font-size: 0.8rem;">Round 3 Template (Chief Arbiter Synthesis):</label>
+                    <div id="r3TemplateGroup" style="display: none;">
+                        <label style="font-size: 0.8rem; color: #c084fc; font-weight: 600;">Round 3 Template (All Agents Review All Info &amp; Form New Conclusion):</label>
                         <textarea id="r3Template" class="tall"></textarea>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
+                    <div id="finalTemplateGroup">
+                        <label style="font-size: 0.8rem; color: var(--judge-gold); font-weight: 600;">Final Round Template (Chief Arbiter Synthesis):</label>
+                        <textarea id="finalTemplate" class="tall"></textarea>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
                         <button type="button" class="btn-ghost btn-sm" onclick="resetCurrentTemplatesToPreset()" title="Reset textareas back to current preset defaults" style="font-size: 0.78rem;">
                             🔄 Reset to Defaults
+                        </button>
+                        <button type="button" class="btn-secondary btn-sm" onclick="openPresetManagerModal()" style="font-size: 0.78rem;">
+                            ⚙️ Manage All Presets...
                         </button>
                         <button type="button" class="btn-secondary btn-sm" onclick="promptSaveCustomPreset()" style="font-size: 0.78rem;">
                             💾 Save as Custom Preset...
@@ -1213,7 +1398,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>
-                        <span>Run 3-Round Debate</span>
+                        <span id="runBtnText">Run 3-Round Debate</span>
                     </button>
                     <button id="stopBtn" class="btn-danger" onclick="stopDebate()" style="display: none;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -1233,7 +1418,7 @@
         <div class="card" id="outputCard" style="display: none;">
             
             <!-- Visual Stepper -->
-            <div class="stepper-container">
+            <div class="stepper-container" id="stepperContainer">
                 <div class="step-item" id="step1">
                     <span class="step-num">1</span>
                     <span>Blind Analysis</span>
@@ -1246,12 +1431,12 @@
                 <div class="step-divider"></div>
                 <div class="step-item" id="step3">
                     <span class="step-num">3</span>
-                    <span>Arbiter Verdict</span>
+                    <span>Final Arbiter Verdict</span>
                 </div>
                 <div class="step-divider"></div>
                 <div class="step-item" id="step4">
                     <span class="step-num">4</span>
-                    <span>Follow-Up Q&A</span>
+                    <span>Follow-Up Q&amp;A</span>
                 </div>
             </div>
 
@@ -1320,7 +1505,7 @@
                 <div style="position: relative;">
                     <textarea id="followupInput" class="short" placeholder="Ask a targeted follow-up question based on the council's findings... (Press Enter to submit, Shift+Enter for new line)"></textarea>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                        <span style="font-size: 0.75rem; color: var(--text-faint);">Context from full 3-round debate is automatically attached.</span>
+                        <span style="font-size: 0.75rem; color: var(--text-faint);">Context from full debate is automatically attached.</span>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <button id="cancelFollowupBtn" class="btn-secondary btn-sm" onclick="cancelFollowUp()" style="display: none;">
                                 <span>Cancel</span>
@@ -1465,7 +1650,7 @@
                                 <path d="M18 7v4a3 3 0 0 1-6 0V7"></path>
                                 <circle cx="12" cy="3" r="1.5" fill="currentColor"></circle>
                             </svg>
-                            Chief Arbiter / Judge (Round 3 Synthesis)
+                            Chief Arbiter / Judge (Final Round Synthesis)
                         </label>
                     </div>
                     <div class="member-config-card is-judge">
@@ -1526,6 +1711,59 @@
         </div>
     </div>
 
+    <!-- Preset Manager & Configurator Modal -->
+    <div class="modal-overlay" id="presetManagerModal" onmousedown="handleModalMouseDown(event)" onclick="handlePresetModalBackdropClick(event)">
+        <div class="modal-dialog pm-modal-dialog">
+            <div class="modal-header" style="flex-shrink: 0;">
+                <div>
+                    <h3 style="font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <span>⚙️ Preset Manager &amp; Deliberation Configurator</span>
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                        Manage and edit presets, configure all-agent round counts, and customize prompt templates.
+                    </p>
+                </div>
+                <button type="button" class="btn-ghost btn-sm" onclick="closePresetManagerModal()" style="padding: 4px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <div class="modal-body pm-modal-body">
+                <!-- Left Sidebar: Presets List -->
+                <div class="pm-sidebar">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Available Presets</span>
+                        <button type="button" class="btn-secondary btn-sm" onclick="pmCreateNewPreset()" style="padding: 3px 8px; font-size: 0.75rem;">
+                            + New Preset
+                        </button>
+                    </div>
+                    <div style="flex-shrink: 0;">
+                        <input type="text" id="pmSearchInput" placeholder="Filter presets..." oninput="pmFilterPresets(this.value)" style="font-size: 0.8rem; padding: 6px 10px; margin-bottom: 0; width: 100%;">
+                    </div>
+                    <div id="pmPresetsList" class="pm-presets-list">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Right Pane: Preset Form Editor -->
+                <div id="pmEditorPanel" class="pm-editor-panel">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <div class="modal-footer" style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-top: 1px solid var(--border);">
+                <div id="pmFooterActionsLeft" style="display: flex; gap: 8px;">
+                    <!-- Dynamic delete or reset buttons -->
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-ghost" onclick="closePresetManagerModal()">Close</button>
+                    <button type="button" class="btn-secondary" id="pmDuplicateBtn" onclick="pmDuplicateCurrentPreset()">📋 Duplicate</button>
+                    <button type="button" class="btn-primary" onclick="pmSaveCurrentPreset()">💾 Save Preset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications Container -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -1575,6 +1813,9 @@ const MODEL_CATALOG = [
 // Domain Prompt Presets
 const DOMAIN_PRESETS = {
     idea_summary: {
+        name: "💡 Open Ideation & Summary (Unfiltered)",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are an objective, creative, and analytical brainstorming partner and researcher. Provide comprehensive ideas, perspectives, and potential solutions tailored to the user's inquiry, considering diverse angles and practical possibilities.`,
         r2Template: `Business inquiry / topic to evaluate: "{QUERY}"
 
@@ -1582,7 +1823,16 @@ Concepts already provided:
 {COUNCIL_RESPONSES_R1}
 
 Task: Cross-examine these ideas and provide your refined, highest-value recommendations.`,
-        r3Template: `This was a user's query: "{QUERY}"
+        r3Template: `Original inquiry / topic to evaluate: "{QUERY}"
+
+Round 1 Proposals:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Peer Cross-Critiques:
+{COUNCIL_RESPONSES_R2}
+
+Task: Carefully review all ideas, critiques, and counter-arguments presented across Rounds 1 and 2. Re-examine your initial suggestions in light of peer feedback. Deliver your revised, standalone conclusion and final recommendations, incorporating the strongest ideas and addressing any flaws identified during cross-examination.`,
+        finalTemplate: `This was a user's query: "{QUERY}"
 
 And here are the responses from a set of AIs:
 {COUNCIL_RESPONSES_R2}
@@ -1591,6 +1841,9 @@ Task: Present all of the ideas in a comprehensive summary, ordered based on thei
     },
 
     business_pitch: {
+        name: "🚀 Business Strategy, Ideation & Ventures",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are an expert business strategist, entrepreneur, and venture advisor. Analyze the business idea, strategic question, pitch, or opportunity with commercial realism and creative problem-solving. Where appropriate and relevant to the user's inquiry, consider factors such as product-market fit, unit economics, automation potential, scalability, go-to-market distribution, and competitive advantage. Adapt your focus and depth directly to the nature of the query (e.g. brainstorming ideas, evaluating a concept, analyzing pricing, or critiquing a pitch).`,
         r2Template: `Business inquiry / topic to evaluate: "{QUERY}"
 
@@ -1598,7 +1851,16 @@ Independent strategic analyses were provided:
 {COUNCIL_RESPONSES_R1}
 
 Task: Cross-examine these perspectives. Pinpoint unexamined assumptions, overlooked opportunities, or practical friction points, and provide your refined, highest-value recommendations.`,
-        r3Template: `You are the Chief Business & Venture Arbiter evaluating: "{QUERY}"
+        r3Template: `Original business inquiry / pitch: "{QUERY}"
+
+Round 1 Initial Strategic Analyses:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Peer Cross-Critiques & Counter-Arguments:
+{COUNCIL_RESPONSES_R2}
+
+Task: Review all strategic analyses and critiques provided so far. Address the vulnerabilities, execution hurdles, and counter-points raised by your peers. Present your updated, definitive strategic conclusion and actionable business roadmap.`,
+        finalTemplate: `You are the Chief Business & Venture Arbiter evaluating: "{QUERY}"
 
 Here are the deliberations from the council members:
 {COUNCIL_RESPONSES_R2}
@@ -1607,6 +1869,9 @@ Task: Deliver a comprehensive strategic synthesis. Summarize all viable ideas, b
     },
 
     business_ops: {
+        name: "📊 Operations, Workflows & Problem Solving",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are a Senior Operations Leader and Strategic Problem Solver. Analyze the business problem, operational challenge, workflow dilemma, or process efficiency query. Where appropriate, consider root causes, process bottlenecks, resource allocation, cost/margin impact, automation levers, and practical implementation trade-offs. Adapt your recommendations to the scale and context of the user's specific challenge.`,
         r2Template: `Operational challenge to evaluate: "{QUERY}"
 
@@ -1614,7 +1879,16 @@ Independent council analyses were submitted:
 {COUNCIL_RESPONSES_R1}
 
 Task: Cross-examine these diagnoses and proposed solutions. Identify hidden operational bottlenecks, implementation hurdles, or trade-offs, and deliver your refined, battle-tested recommendation.`,
-        r3Template: `You are the Chief Operating Officer (COO) and Strategic Arbiter evaluating: "{QUERY}"
+        r3Template: `Operational challenge / process inquiry: "{QUERY}"
+
+Round 1 Initial Diagnoses & Solutions:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Operational Critiques & Trade-offs:
+{COUNCIL_RESPONSES_R2}
+
+Task: Re-examine the root causes, process bottlenecks, and peer critiques raised in Round 2. Reconcile trade-offs (cost, time, complexity) and provide your battle-tested, refined operational solution.`,
+        finalTemplate: `You are the Chief Operating Officer (COO) and Strategic Arbiter evaluating: "{QUERY}"
 
 Here are the deliberations from the council members:
 {COUNCIL_RESPONSES_R2}
@@ -1623,6 +1897,9 @@ Task: Deliver a comprehensive operational synthesis. Summarize all proposed solu
     },
 
     software: {
+        name: "💻 Software Architecture & Code Audit",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are a Principal Software Architect and Systems Engineer. Evaluate the technical problem, code, system architecture, or engineering inquiry. Where appropriate, evaluate trade-offs across scalability, security, maintainability, performance, simplicity, and operational complexity. Highlight trade-offs honestly without dogma, adapting your focus directly to what the user is asking.`,
         r2Template: `Technical query: "{QUERY}"
 
@@ -1630,7 +1907,16 @@ Independent engineering analyses were provided:
 {COUNCIL_RESPONSES_R1}
 
 Task: Critically review and cross-examine these solutions. Pinpoint edge cases, potential failure modes, or unnecessary complexity, and provide your refined recommendation.`,
-        r3Template: `You are the Chief Technical Arbiter and Staff Systems Architect evaluating: "{QUERY}"
+        r3Template: `Technical query / architecture challenge: "{QUERY}"
+
+Round 1 Initial Engineering Proposals:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Architecture Critiques & Failure Modes:
+{COUNCIL_RESPONSES_R2}
+
+Task: Review all proposed designs and the critical feedback from fellow architects. Re-evaluate failure modes, scalability limits, and maintainability concerns. Present your refined, final technical architecture recommendation with clear trade-off justifications.`,
+        finalTemplate: `You are the Chief Technical Arbiter and Staff Systems Architect evaluating: "{QUERY}"
 
 Here are the positions of each architect after cross-examination:
 {COUNCIL_RESPONSES_R2}
@@ -1639,6 +1925,9 @@ Task: Deliver a comprehensive technical synthesis. Summarize all viable architec
     },
 
     investing: {
+        name: "📈 Investment & Due Diligence",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are a Senior Investment Strategist and Financial Analyst. Analyze the financial query, asset, market trend, or investment thesis with empirical rigor. Where appropriate, consider fundamental valuation, macroeconomic drivers, competitive positioning, risk-reward asymmetry, and cash flow dynamics. Adapt your analysis to the specific scenario or asset class queried.`,
         r2Template: `Investment query / topic: "{QUERY}"
 
@@ -1646,7 +1935,16 @@ Independent analyst reports were produced:
 {COUNCIL_RESPONSES_R1}
 
 Task: Cross-examine assumptions, valuation rationales, and risk factors. Identify blind spots, over-optimistic projections, or asymmetric tail risks, and provide your revised thesis.`,
-        r3Template: `You are the Chief Investment Officer and Arbitrating Committee Chair evaluating: "{QUERY}"
+        r3Template: `Investment query / thesis: "{QUERY}"
+
+Round 1 Initial Analyst Theses:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Risk Critiques & Blind Spot Analyses:
+{COUNCIL_RESPONSES_R2}
+
+Task: Re-evaluate your investment thesis against the counter-arguments, valuation stress-tests, and risk factors raised by your peers. Provide your hardened, final investment thesis with updated risk-reward asymmetry and entry/exit considerations.`,
+        finalTemplate: `You are the Chief Investment Officer and Arbitrating Committee Chair evaluating: "{QUERY}"
 
 Here are the deliberations of the senior analysts:
 {COUNCIL_RESPONSES_R2}
@@ -1655,6 +1953,9 @@ Task: Synthesize a comprehensive, multi-scenario investment summary. Present all
     },
 
     medical: {
+        name: "🩺 Medical & Pharmacology Hierarchy",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are an expert clinical pharmacologist and medical researcher. Evaluate the clinical, pharmacological, or health inquiry. When assessing efficacy, mechanisms, or safety, apply an evidence hierarchy where appropriate:
 Tier 1 (Highest Weight): Human randomized controlled trials (RCTs), systematic reviews, and meta-analyses.
 Tier 2 (Moderate Weight): Observational human data, pharmacokinetic/pharmacodynamic profiling, and established metabolic pathways.
@@ -1667,7 +1968,16 @@ Independent expert analyses were generated:
 {COUNCIL_RESPONSES_R1}
 
 Task: Identify contradictions, factual errors, or overstatements, but don't list them in your response. Offer your refined analysis and recommendation, explaining your clinical reasoning and evidence basis.`,
-        r3Template: `You are the Chief Arbiter for an expert medical council evaluating: "{QUERY}"
+        r3Template: `Clinical / pharmacological inquiry: "{QUERY}"
+
+Round 1 Initial Clinical Assessments:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Peer Critiques & Evidence Scrutiny:
+{COUNCIL_RESPONSES_R2}
+
+Task: Scrutinize the clinical arguments and peer critiques against the evidence hierarchy (human RCTs vs mechanistic theories). Address any disputed claims, drug interactions, or safety concerns, and provide your refined, final clinical consensus stance.`,
+        finalTemplate: `You are the Chief Arbiter for an expert medical council evaluating: "{QUERY}"
 
 Here are the positions of each council member after cross-critique:
 {COUNCIL_RESPONSES_R2}
@@ -1676,6 +1986,9 @@ Task: Synthesize a clear, comprehensive consensus. Detail points of agreement an
     },
 
     legal: {
+        name: "⚖️ Legal & Regulatory Policy",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are an expert Legal Scholar and Regulatory Analyst. Analyze the inquiry using statutory principles, regulatory frameworks, precedent, and compliance risk assessments where applicable. Maintain strict analytical rigor while adapting to the jurisdictional context or practical situation presented.`,
         r2Template: `Legal / Regulatory topic: "{QUERY}"
 
@@ -1683,7 +1996,16 @@ Independent legal briefs were compiled:
 {COUNCIL_RESPONSES_R1}
 
 Task: Identify legal vulnerabilities, misapplied principles, or jurisdictional oversights. Deliver your hardened legal perspective.`,
-        r3Template: `You are the Senior Arbiter and Appellate Reviewer evaluating: "{QUERY}"
+        r3Template: `Legal / regulatory topic: "{QUERY}"
+
+Round 1 Initial Legal Briefs:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Jurisprudential Critiques & Vulnerability Analyses:
+{COUNCIL_RESPONSES_R2}
+
+Task: Review all statutory interpretations, precedent citations, and peer vulnerabilities exposed in Round 2. Harden your legal position, address counter-precedents, and deliver your definitive legal conclusion and compliance strategy.`,
+        finalTemplate: `You are the Senior Arbiter and Appellate Reviewer evaluating: "{QUERY}"
 
 Here are the revised briefs from council members:
 {COUNCIL_RESPONSES_R2}
@@ -1692,6 +2014,9 @@ Task: Deliver a comprehensive legal synthesis. Summarize all legal theories, exp
     },
 
     general: {
+        name: "🧠 General Truth & Logic Arbiter",
+        allAgentRounds: 2,
+        arbiterMode: "combination",
         sysPrompt: `You are an objective, world-class analytical thinker and researcher. Synthesize factual evidence, reason from first principles, dissect cognitive biases, and provide the most accurate, balanced, and nuanced answer possible, adapting your depth to the user's inquiry.`,
         r2Template: `Question to evaluate: "{QUERY}"
 
@@ -1699,7 +2024,16 @@ Independent analyses:
 {COUNCIL_RESPONSES_R1}
 
 Task: Spot errors, unsupported assumptions, or incomplete logic. Provide your refined synthesis and reasoning.`,
-        r3Template: `You are the Chief Arbiter evaluating this topic: "{QUERY}"
+        r3Template: `Question to evaluate: "{QUERY}"
+
+Round 1 Initial Analyses:
+{COUNCIL_RESPONSES_R1}
+
+Round 2 Peer Critiques & Logical Counter-points:
+{COUNCIL_RESPONSES_R2}
+
+Task: Re-examine all arguments, logical critique, and evidence presented by the council so far. Correct any unsupported assumptions, synthesize the best insights, and deliver your revised, comprehensive final conclusion.`,
+        finalTemplate: `You are the Chief Arbiter evaluating this topic: "{QUERY}"
 
 Final deliberations:
 {COUNCIL_RESPONSES_R2}
@@ -1713,7 +2047,8 @@ const STORAGE = {
     KEY_SESSIONS: "ai_council_sessions_v2",
     KEY_SETTINGS: "ai_council_settings_v2",
     KEY_API: "ai_council_openrouter_api_key",
-    KEY_CUSTOM_PRESETS: "ai_council_custom_presets_v1"
+    KEY_CUSTOM_PRESETS: "ai_council_custom_presets_v1",
+    KEY_BUILTIN_OVERRIDES: "ai_council_builtin_preset_overrides_v1"
 };
 
 // Initial Default State
@@ -1729,7 +2064,8 @@ let appSettings = {
         color: "#ec4899"
     },
     activePreset: "idea_summary",
-    arbiterMode: "combination"
+    arbiterMode: "combination",
+    allAgentRounds: 2
 };
 
 let sessions = [];
@@ -1881,6 +2217,7 @@ function loadSettingsFromStorage() {
             if (parsed.judge) appSettings.judge = parsed.judge;
             if (parsed.activePreset) appSettings.activePreset = parsed.activePreset;
             if (parsed.arbiterMode) appSettings.arbiterMode = parsed.arbiterMode;
+            if (parsed.allAgentRounds) appSettings.allAgentRounds = parseInt(parsed.allAgentRounds, 10);
         }
 
         const savedApiKey = localStorage.getItem(STORAGE.KEY_API);
@@ -1954,7 +2291,28 @@ function toggleApiKeyVisibility() {
     }
 }
 
+function getBuiltinOverrides() {
+    try {
+        const raw = localStorage.getItem(STORAGE.KEY_BUILTIN_OVERRIDES);
+        return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveBuiltinOverrides(overrides) {
+    try {
+        localStorage.setItem(STORAGE.KEY_BUILTIN_OVERRIDES, JSON.stringify(overrides));
+    } catch (e) {
+        console.error("Failed to save builtin overrides:", e);
+    }
+}
+
 function getPresetDisplayName(k) {
+    const overrides = getBuiltinOverrides();
+    if (overrides[k] && overrides[k].name) return overrides[k].name;
+    const p = DOMAIN_PRESETS[k];
+    if (p && p.name) return p.name;
     const names = {
         idea_summary: "💡 Open Ideation & Summary (Unfiltered)",
         business_pitch: "🚀 Business Strategy, Ideation & Ventures",
@@ -1985,6 +2343,32 @@ function saveCustomPresets(presets) {
     }
 }
 
+function normalizePreset(preset) {
+    if (!preset) return null;
+    const p = { ...preset };
+    // Backward compatibility: If an old custom preset had r3Template as the arbiter and no finalTemplate
+    if (!p.finalTemplate && p.r3Template) {
+        p.finalTemplate = p.r3Template;
+        p.r3Template = DOMAIN_PRESETS.general.r3Template;
+    }
+    if (!p.allAgentRounds) p.allAgentRounds = 2;
+    if (!p.arbiterMode) p.arbiterMode = "combination";
+    return p;
+}
+
+function getEffectivePreset(presetKey) {
+    const custom = getCustomPresets();
+    if (custom[presetKey]) {
+        return normalizePreset(custom[presetKey]);
+    }
+    const overrides = getBuiltinOverrides();
+    const base = DOMAIN_PRESETS[presetKey] || DOMAIN_PRESETS.idea_summary || DOMAIN_PRESETS.general;
+    if (overrides[presetKey]) {
+        return normalizePreset({ ...base, ...overrides[presetKey] });
+    }
+    return normalizePreset(base);
+}
+
 function renderPresetDropdown() {
     const select = document.getElementById("presetSelect");
     if (!select) return;
@@ -1997,10 +2381,12 @@ function renderPresetDropdown() {
     builtInGroup.label = "Built-in Presets";
 
     const builtInKeys = Object.keys(DOMAIN_PRESETS);
+    const overrides = getBuiltinOverrides();
     builtInKeys.forEach(k => {
         const opt = document.createElement("option");
         opt.value = k;
-        opt.textContent = getPresetDisplayName(k);
+        const isModified = !!overrides[k];
+        opt.textContent = (isModified ? "✏️ " : "") + getPresetDisplayName(k);
         if (k === currentVal) opt.selected = true;
         builtInGroup.appendChild(opt);
     });
@@ -2015,7 +2401,7 @@ function renderPresetDropdown() {
         customKeys.forEach(k => {
             const opt = document.createElement("option");
             opt.value = k;
-            opt.textContent = `⭐ ${custom[k].name}`;
+            opt.textContent = `⭐ ${custom[k].name || k}`;
             if (k === currentVal) opt.selected = true;
             customGroup.appendChild(opt);
         });
@@ -2031,27 +2417,82 @@ function renderPresetDropdown() {
     if (arbiterSelect) {
         arbiterSelect.value = appSettings.arbiterMode || "combination";
     }
+
+    const roundsSelect = document.getElementById("allAgentRoundsSelect");
+    if (roundsSelect) {
+        roundsSelect.value = String(appSettings.allAgentRounds || 2);
+    }
+    const collRoundsSelect = document.getElementById("collapsibleAllAgentRoundsSelect");
+    if (collRoundsSelect) {
+        collRoundsSelect.value = String(appSettings.allAgentRounds || 2);
+    }
+}
+
+function updateRoundVisibility() {
+    const rounds = appSettings.allAgentRounds || 2;
+    const r2Group = document.getElementById("r2TemplateGroup");
+    const r3Group = document.getElementById("r3TemplateGroup");
+    if (r2Group) r2Group.style.display = rounds >= 2 ? "block" : "none";
+    if (r3Group) r3Group.style.display = rounds >= 3 ? "block" : "none";
+
+    const runBtnText = document.getElementById("runBtnText");
+    if (runBtnText) {
+        const total = rounds + 1;
+        runBtnText.textContent = `Run ${total}-Round Debate`;
+    }
+
+    renderStepper(1);
+}
+
+function setAllAgentRounds(rounds) {
+    rounds = parseInt(rounds, 10) || 2;
+    appSettings.allAgentRounds = rounds;
+    saveSettingsToStorage();
+
+    const roundsSelect = document.getElementById("allAgentRoundsSelect");
+    if (roundsSelect) roundsSelect.value = String(rounds);
+    const collRoundsSelect = document.getElementById("collapsibleAllAgentRoundsSelect");
+    if (collRoundsSelect) collRoundsSelect.value = String(rounds);
+
+    updateRoundVisibility();
+    showToast(`Deliberation set to ${rounds} all-agent round${rounds > 1 ? 's' : ''} + Final Round Arbiter`);
 }
 
 function setupTemplates(presetKey) {
-    const custom = getCustomPresets();
-    const preset = custom[presetKey] || DOMAIN_PRESETS[presetKey] || DOMAIN_PRESETS.idea_summary || DOMAIN_PRESETS.general;
+    const preset = getEffectivePreset(presetKey);
+    if (!preset) return;
+
+    appSettings.allAgentRounds = preset.allAgentRounds || 2;
+    appSettings.arbiterMode = preset.arbiterMode || "combination";
 
     const select = document.getElementById("presetSelect");
     if (select) select.value = presetKey;
 
+    const roundsSelect = document.getElementById("allAgentRoundsSelect");
+    if (roundsSelect) roundsSelect.value = String(appSettings.allAgentRounds);
+    const collRoundsSelect = document.getElementById("collapsibleAllAgentRoundsSelect");
+    if (collRoundsSelect) collRoundsSelect.value = String(appSettings.allAgentRounds);
+
+    const arbiterSelect = document.getElementById("arbiterModeSelect");
+    if (arbiterSelect) arbiterSelect.value = appSettings.arbiterMode;
+
     const sysEl = document.getElementById("sysPrompt");
     const r2El = document.getElementById("r2Template");
     const r3El = document.getElementById("r3Template");
+    const finalEl = document.getElementById("finalTemplate");
 
-    if (sysEl) sysEl.value = preset.sysPrompt;
-    if (r2El) r2El.value = preset.r2Template;
-    if (r3El) r3El.value = preset.r3Template;
+    if (sysEl) sysEl.value = preset.sysPrompt || "";
+    if (r2El) r2El.value = preset.r2Template || "";
+    if (r3El) r3El.value = preset.r3Template || "";
+    if (finalEl) finalEl.value = preset.finalTemplate || "";
 
+    const custom = getCustomPresets();
     const deleteBtn = document.getElementById("deletePresetBtn");
     if (deleteBtn) {
         deleteBtn.style.display = custom[presetKey] ? "inline-flex" : "none";
     }
+
+    updateRoundVisibility();
 }
 
 function applyPreset(presetKey) {
@@ -2070,7 +2511,7 @@ function applyPreset(presetKey) {
 function promptSaveCustomPreset() {
     const currentPreset = appSettings.activePreset;
     const custom = getCustomPresets();
-    const defaultName = custom[currentPreset] ? custom[currentPreset].name : "My Custom Preset";
+    const defaultName = custom[currentPreset] ? custom[currentPreset].name : getPresetDisplayName(currentPreset);
 
     const name = prompt("Enter a name for this custom preset:", defaultName);
     if (!name || !name.trim()) return;
@@ -2082,10 +2523,12 @@ function promptSaveCustomPreset() {
 
     custom[id] = {
         name: trimmedName,
+        allAgentRounds: appSettings.allAgentRounds || 2,
+        arbiterMode: appSettings.arbiterMode || "combination",
         sysPrompt: document.getElementById("sysPrompt").value,
         r2Template: document.getElementById("r2Template").value,
         r3Template: document.getElementById("r3Template").value,
-        arbiterMode: appSettings.arbiterMode || "combination"
+        finalTemplate: document.getElementById("finalTemplate").value
     };
 
     saveCustomPresets(custom);
@@ -2123,22 +2566,405 @@ function setArbiterMode(mode) {
     appSettings.arbiterMode = mode;
     saveSettingsToStorage();
 
-    const r3El = document.getElementById("r3Template");
-    if (!r3El) return;
+    const finalEl = document.getElementById("finalTemplate");
+    if (!finalEl) return;
 
-    let current = r3El.value;
+    let current = finalEl.value;
 
     const combinationTask = `Task: Present all of the ideas in a comprehensive summary, ordered based on their strength and feasibility. Explicitly identify where there was agreement or disagreement among the models. Do NOT discard or filter out ideas simply because they were not the top choice—preserve all distinct possibilities so the user can review the full spectrum of options.`;
 
     const decisiveTask = `Task: Act as a decisive Chief Arbiter. Critically evaluate all council proposals, filter out weaker or redundant arguments, and select the single best recommendation or verdict. Explicitly explain why other options were eliminated, making an authoritative final ruling.`;
 
     if (/Task:[\s\S]*$/i.test(current)) {
-        r3El.value = current.replace(/Task:[\s\S]*$/i, mode === "judge" ? decisiveTask : combinationTask);
+        finalEl.value = current.replace(/Task:[\s\S]*$/i, mode === "judge" ? decisiveTask : combinationTask);
     } else {
-        r3El.value = current.trim() + "\n\n" + (mode === "judge" ? decisiveTask : combinationTask);
+        finalEl.value = current.trim() + "\n\n" + (mode === "judge" ? decisiveTask : combinationTask);
     }
 
-    showToast(`Arbiter mode: ${mode === 'judge' ? 'Decisive Judge' : 'Comprehensive Combination'}`);
+    showToast(`Final Round Arbiter mode: ${mode === 'judge' ? 'Decisive Judge' : 'Comprehensive Combination'}`);
+}
+
+/* ================= PRESET MANAGER MODAL LOGIC ================= */
+let currentPmPresetId = "idea_summary";
+let pmPresetFilter = "";
+
+function openPresetManagerModal(presetIdToSelect) {
+    const modal = document.getElementById("presetManagerModal");
+    if (!modal) return;
+    currentPmPresetId = presetIdToSelect || appSettings.activePreset || "idea_summary";
+    pmPresetFilter = "";
+    const searchInput = document.getElementById("pmSearchInput");
+    if (searchInput) searchInput.value = "";
+    renderPresetManagerList();
+    pmSelectPreset(currentPmPresetId);
+    modal.classList.add("open");
+}
+
+function closePresetManagerModal() {
+    const modal = document.getElementById("presetManagerModal");
+    if (modal) modal.classList.remove("open");
+}
+
+function handlePresetModalBackdropClick(event) {
+    if (councilModalMouseDownTarget === event.currentTarget && event.target === event.currentTarget) {
+        closePresetManagerModal();
+    }
+    councilModalMouseDownTarget = null;
+}
+
+function pmFilterPresets(text) {
+    pmPresetFilter = (text || "").trim().toLowerCase();
+    renderPresetManagerList();
+}
+
+function getAllPresetsList() {
+    const list = [];
+    const overrides = getBuiltinOverrides();
+    Object.keys(DOMAIN_PRESETS).forEach(k => {
+        const isModified = !!overrides[k];
+        const effective = getEffectivePreset(k);
+        list.push({
+            id: k,
+            isBuiltin: true,
+            isModified: isModified,
+            data: effective
+        });
+    });
+    const custom = getCustomPresets();
+    Object.keys(custom).forEach(k => {
+        list.push({
+            id: k,
+            isBuiltin: false,
+            isModified: false,
+            data: normalizePreset(custom[k])
+        });
+    });
+    return list;
+}
+
+function renderPresetManagerList() {
+    const container = document.getElementById("pmPresetsList");
+    if (!container) return;
+
+    const prevScroll = container.scrollTop;
+    const list = getAllPresetsList();
+    const filtered = list.filter(item => {
+        if (!pmPresetFilter) return true;
+        const name = (item.data.name || item.id).toLowerCase();
+        return name.includes(pmPresetFilter) || item.id.toLowerCase().includes(pmPresetFilter);
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-faint); font-size: 0.8rem; padding: 20px 0;">No matching presets</div>`;
+        return;
+    }
+
+    let html = "";
+    filtered.forEach(item => {
+        const isSelected = item.id === currentPmPresetId;
+        const p = item.data;
+        const rounds = p.allAgentRounds || 2;
+        html += `
+            <div class="pm-preset-item ${isSelected ? 'active' : ''}" onclick="pmSelectPreset('${item.id}')" data-preset-id="${item.id}">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                    <span style="font-size: 0.82rem; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${escapeHtml(p.name || item.id)}
+                    </span>
+                </div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+                    ${item.isBuiltin ? `<span class="pm-badge pm-badge-builtin">Built-in</span>` : `<span class="pm-badge pm-badge-custom">Custom</span>`}
+                    ${item.isModified ? `<span class="pm-badge pm-badge-modified">Modified</span>` : ``}
+                    <span class="pm-badge pm-badge-rounds">${rounds} Agent Round${rounds > 1 ? 's' : ''}</span>
+                    <span class="pm-badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">${p.arbiterMode === 'judge' ? 'Judge' : 'Summary'}</span>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+    container.scrollTop = prevScroll;
+}
+
+function pmSelectPreset(presetId) {
+    currentPmPresetId = presetId;
+    renderPresetManagerList();
+    pmRenderEditor(presetId);
+}
+
+function pmApplyAndClose(presetId) {
+    applyPreset(presetId);
+    closePresetManagerModal();
+}
+
+function pmRenderEditor(presetId) {
+    const panel = document.getElementById("pmEditorPanel");
+    const actionsLeft = document.getElementById("pmFooterActionsLeft");
+    if (!panel) return;
+
+    let preset = null;
+    let isBuiltin = false;
+    let isModified = false;
+
+    if (presetId === "new") {
+        preset = {
+            name: "New Custom Preset",
+            allAgentRounds: 2,
+            arbiterMode: "combination",
+            sysPrompt: DOMAIN_PRESETS.general.sysPrompt,
+            r2Template: DOMAIN_PRESETS.general.r2Template,
+            r3Template: DOMAIN_PRESETS.general.r3Template,
+            finalTemplate: DOMAIN_PRESETS.general.finalTemplate
+        };
+    } else {
+        isBuiltin = !!DOMAIN_PRESETS[presetId];
+        const overrides = getBuiltinOverrides();
+        isModified = isBuiltin && !!overrides[presetId];
+        preset = getEffectivePreset(presetId);
+    }
+
+    panel.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--border); flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff;">
+                    ${presetId === 'new' ? 'Create New Preset' : `Edit Preset: ${escapeHtml(preset.name || presetId)}`}
+                </h4>
+                ${isBuiltin ? `<span class="pm-badge pm-badge-builtin">Built-in</span>` : (presetId === 'new' ? `<span class="pm-badge pm-badge-custom">New</span>` : `<span class="pm-badge pm-badge-custom">Custom</span>`)}
+                ${isModified ? `<span class="pm-badge pm-badge-modified">Modified</span>` : ``}
+            </div>
+            ${presetId !== 'new' ? `<button type="button" class="btn-secondary btn-sm" onclick="pmApplyAndClose('${presetId}')">Apply to Debate &rarr;</button>` : ''}
+        </div>
+
+        <div style="flex-shrink: 0;">
+            <label style="font-size: 0.8rem; font-weight: 600;">Preset Display Name:</label>
+            <input type="text" id="pmNameInput" value="${escapeHtml(preset.name || '')}" placeholder="e.g. 🚀 SaaS Venture Audit">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 4px;">
+                    <span>🔄 All-Agent Rounds:</span>
+                </label>
+                <select id="pmRoundsSelect" onchange="pmEditorRoundsChange(this.value)">
+                    <option value="2" ${preset.allAgentRounds === 2 ? 'selected' : ''}>2 Rounds: Initial Feedback + Cross-Critique (Standard)</option>
+                    <option value="3" ${preset.allAgentRounds === 3 ? 'selected' : ''}>3 Rounds: Initial Feedback + Cross-Critique + Revised Conclusion</option>
+                    <option value="1" ${preset.allAgentRounds === 1 ? 'selected' : ''}>1 Round: Initial Feedback Only</option>
+                </select>
+                <span style="font-size: 0.72rem; color: var(--text-faint);">Deliberation rounds all council members participate in before the Final Round Arbiter.</span>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; color: var(--judge-gold); display: flex; align-items: center; gap: 4px;">
+                    <span>👑 Final Round Arbiter Role:</span>
+                </label>
+                <select id="pmArbiterModeSelect">
+                    <option value="combination" ${preset.arbiterMode === 'combination' ? 'selected' : ''}>📋 Combination &amp; Comprehensive Summary</option>
+                    <option value="judge" ${preset.arbiterMode === 'judge' ? 'selected' : ''}>⚖️ Decisive Judge (Authoritative Ruling)</option>
+                </select>
+                <span style="font-size: 0.72rem; color: var(--text-faint);">Whether the final arbiter synthesizes all proposals or selects the single winner.</span>
+            </div>
+        </div>
+
+        <div>
+            <label style="font-size: 0.8rem; font-weight: 600;">System Prompt (Shared by all agents in council):</label>
+            <textarea id="pmSysPrompt" class="tall" style="min-height: 90px;">${escapeHtml(preset.sysPrompt || '')}</textarea>
+        </div>
+
+        <div id="pmR2Group">
+            <label style="font-size: 0.8rem; font-weight: 600;">Round 2 Template (Peer Cross-Critique &amp; Anonymized Review):</label>
+            <textarea id="pmR2Template" class="tall" style="min-height: 90px;">${escapeHtml(preset.r2Template || '')}</textarea>
+        </div>
+
+        <div id="pmR3Group" style="display: ${preset.allAgentRounds >= 3 ? 'block' : 'none'};">
+            <label style="font-size: 0.8rem; font-weight: 600; color: #c084fc;">Round 3 Template (All Agents Review All Info &amp; Form New Conclusion):</label>
+            <textarea id="pmR3Template" class="tall" style="min-height: 110px;">${escapeHtml(preset.r3Template || '')}</textarea>
+        </div>
+
+        <div>
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--judge-gold);">Final Round Template (Chief Arbiter Synthesis):</label>
+            <textarea id="pmFinalTemplate" class="tall" style="min-height: 110px;">${escapeHtml(preset.finalTemplate || '')}</textarea>
+        </div>
+    `;
+
+    if (actionsLeft) {
+        if (isBuiltin) {
+            actionsLeft.innerHTML = `
+                ${isModified ? `
+                    <button type="button" class="btn-ghost btn-sm" onclick="pmResetCurrentPresetToDefault()" style="color: var(--accent); font-size: 0.78rem;">
+                        🔄 Reset Built-in to Defaults
+                    </button>
+                ` : `<span style="font-size: 0.75rem; color: var(--text-faint); padding: 4px;">Built-in factory preset. Editing saves a persistent override.</span>`}
+            `;
+        } else if (presetId !== "new") {
+            actionsLeft.innerHTML = `
+                <button type="button" class="btn-ghost btn-sm" onclick="pmDeleteCurrentPreset()" style="color: var(--danger); font-size: 0.78rem;">
+                    🗑️ Delete Custom Preset
+                </button>
+            `;
+        } else {
+            actionsLeft.innerHTML = "";
+        }
+    }
+}
+
+function pmEditorRoundsChange(val) {
+    const r3Group = document.getElementById("pmR3Group");
+    const rounds = parseInt(val, 10);
+    if (r3Group) {
+        r3Group.style.display = rounds >= 3 ? "block" : "none";
+    }
+}
+
+function pmCreateNewPreset() {
+    currentPmPresetId = "new";
+    renderPresetManagerList();
+    pmRenderEditor("new");
+    const nameInput = document.getElementById("pmNameInput");
+    if (nameInput) {
+        nameInput.focus();
+        nameInput.select();
+    }
+}
+
+function pmSaveCurrentPreset() {
+    const nameInput = document.getElementById("pmNameInput");
+    const roundsSelect = document.getElementById("pmRoundsSelect");
+    const arbiterSelect = document.getElementById("pmArbiterModeSelect");
+    const sysPrompt = document.getElementById("pmSysPrompt") ? document.getElementById("pmSysPrompt").value : "";
+    const r2Template = document.getElementById("pmR2Template") ? document.getElementById("pmR2Template").value : "";
+    const r3Template = document.getElementById("pmR3Template") ? document.getElementById("pmR3Template").value : "";
+    const finalTemplate = document.getElementById("pmFinalTemplate") ? document.getElementById("pmFinalTemplate").value : "";
+
+    const name = nameInput ? nameInput.value.trim() : "";
+    if (!name) {
+        alert("Please enter a name for the preset.");
+        if (nameInput) nameInput.focus();
+        return;
+    }
+
+    const allAgentRounds = parseInt(roundsSelect.value, 10) || 2;
+    const arbiterMode = arbiterSelect.value || "combination";
+
+    if (currentPmPresetId === "new") {
+        const id = "custom_" + Date.now();
+        const custom = getCustomPresets();
+        custom[id] = {
+            name: name,
+            allAgentRounds: allAgentRounds,
+            arbiterMode: arbiterMode,
+            sysPrompt: sysPrompt,
+            r2Template: r2Template,
+            r3Template: r3Template,
+            finalTemplate: finalTemplate
+        };
+        saveCustomPresets(custom);
+        currentPmPresetId = id;
+        showToast(`Created new preset "${name}"!`);
+    } else if (DOMAIN_PRESETS[currentPmPresetId]) {
+        const overrides = getBuiltinOverrides();
+        overrides[currentPmPresetId] = {
+            name: name,
+            allAgentRounds: allAgentRounds,
+            arbiterMode: arbiterMode,
+            sysPrompt: sysPrompt,
+            r2Template: r2Template,
+            r3Template: r3Template,
+            finalTemplate: finalTemplate
+        };
+        saveBuiltinOverrides(overrides);
+        showToast(`Saved modifications to built-in preset "${name}"!`);
+    } else {
+        const custom = getCustomPresets();
+        custom[currentPmPresetId] = {
+            name: name,
+            allAgentRounds: allAgentRounds,
+            arbiterMode: arbiterMode,
+            sysPrompt: sysPrompt,
+            r2Template: r2Template,
+            r3Template: r3Template,
+            finalTemplate: finalTemplate
+        };
+        saveCustomPresets(custom);
+        showToast(`Updated preset "${name}"!`);
+    }
+
+    if (appSettings.activePreset === currentPmPresetId) {
+        setupTemplates(currentPmPresetId);
+    }
+    renderPresetDropdown();
+    renderPresetManagerList();
+    pmRenderEditor(currentPmPresetId);
+}
+
+function pmDuplicateCurrentPreset() {
+    let preset = null;
+    if (currentPmPresetId === "new") {
+        preset = {
+            name: document.getElementById("pmNameInput").value,
+            allAgentRounds: parseInt(document.getElementById("pmRoundsSelect").value, 10),
+            arbiterMode: document.getElementById("pmArbiterModeSelect").value,
+            sysPrompt: document.getElementById("pmSysPrompt").value,
+            r2Template: document.getElementById("pmR2Template").value,
+            r3Template: document.getElementById("pmR3Template").value,
+            finalTemplate: document.getElementById("pmFinalTemplate").value
+        };
+    } else {
+        preset = getEffectivePreset(currentPmPresetId);
+    }
+
+    const copyName = `${preset.name || 'Preset'} (Copy)`;
+    const newId = "custom_" + Date.now();
+    const custom = getCustomPresets();
+    custom[newId] = {
+        name: copyName,
+        allAgentRounds: preset.allAgentRounds || 2,
+        arbiterMode: preset.arbiterMode || "combination",
+        sysPrompt: preset.sysPrompt || "",
+        r2Template: preset.r2Template || "",
+        r3Template: preset.r3Template || "",
+        finalTemplate: preset.finalTemplate || ""
+    };
+    saveCustomPresets(custom);
+    currentPmPresetId = newId;
+    renderPresetDropdown();
+    renderPresetManagerList();
+    pmRenderEditor(newId);
+    showToast(`Duplicated as "${copyName}"!`);
+}
+
+function pmResetCurrentPresetToDefault() {
+    if (!DOMAIN_PRESETS[currentPmPresetId]) return;
+    if (!confirm(`Reset "${getPresetDisplayName(currentPmPresetId)}" back to its factory default settings?`)) return;
+
+    const overrides = getBuiltinOverrides();
+    delete overrides[currentPmPresetId];
+    saveBuiltinOverrides(overrides);
+
+    if (appSettings.activePreset === currentPmPresetId) {
+        setupTemplates(currentPmPresetId);
+    }
+    renderPresetDropdown();
+    renderPresetManagerList();
+    pmRenderEditor(currentPmPresetId);
+    showToast(`Reset preset to factory defaults.`);
+}
+
+function pmDeleteCurrentPreset() {
+    const custom = getCustomPresets();
+    if (!custom[currentPmPresetId]) return;
+
+    const name = custom[currentPmPresetId].name || currentPmPresetId;
+    if (!confirm(`Are you sure you want to delete custom preset "${name}"?`)) return;
+
+    delete custom[currentPmPresetId];
+    saveCustomPresets(custom);
+
+    if (appSettings.activePreset === currentPmPresetId) {
+        appSettings.activePreset = "idea_summary";
+        setupTemplates("idea_summary");
+    }
+    currentPmPresetId = "idea_summary";
+    renderPresetDropdown();
+    renderPresetManagerList();
+    pmRenderEditor("idea_summary");
+    showToast(`Deleted custom preset "${name}".`);
 }
 
 async function callOpenRouter(apiKey, model, systemPrompt, userPrompt, signal = null) {
@@ -2177,6 +3003,8 @@ async function startDebate() {
     const sysPrompt = document.getElementById("sysPrompt").value.trim();
     const r2Template = document.getElementById("r2Template").value;
     const r3Template = document.getElementById("r3Template").value;
+    const finalTemplate = document.getElementById("finalTemplate").value;
+    const allAgentRounds = appSettings.allAgentRounds || 2;
 
     if (!apiKey) {
         alert("Please provide your OpenRouter API Key under 'Council & Keys'.");
@@ -2213,6 +3041,7 @@ async function startDebate() {
     if (sessionJsonBtn) sessionJsonBtn.disabled = true;
     statusSpinner.style.display = "inline-block";
 
+    renderStepper(1);
     setStepperStep(1);
     startDebateTimer();
 
@@ -2222,23 +3051,26 @@ async function startDebate() {
         updatedAt: new Date().toISOString(),
         query: query,
         title: query.length > 70 ? query.substring(0, 67) + "..." : query,
+        allAgentRounds: allAgentRounds,
         sysPrompt: sysPrompt,
         r2Template: r2Template,
         r3Template: r3Template,
+        finalTemplate: finalTemplate,
         council: JSON.parse(JSON.stringify(appSettings.council)),
         judge: JSON.parse(JSON.stringify(appSettings.judge)),
         round1: [],
         round2: [],
-        round3: null,
+        round3: [],
+        finalRound: null,
         followUps: []
     };
     currentSession = newSession;
 
     try {
-        // ================= ROUND 1 =================
+        // ================= ROUND 1 (All Agents) =================
         statusText.textContent = `Round 1: Querying ${appSettings.council.length} Council Members Independently...`;
         
-        const r1Promises = appSettings.council.map(async (member, idx) => {
+        const r1Promises = appSettings.council.map(async (member) => {
             const startT = performance.now();
             const text = await callOpenRouter(apiKey, member.model, sysPrompt, query, abortController.signal);
             const durationSec = ((performance.now() - startT) / 1000).toFixed(1);
@@ -2268,73 +3100,146 @@ async function startDebate() {
             });
         });
 
-        // ================= ROUND 2 =================
-        setStepperStep(2);
-        statusText.textContent = "Round 2: Anonymizing responses & executing peer cross-critique...";
-
         let r1FormattedBlocks = "";
         r1Results.forEach((res, index) => {
             const letter = String.fromCharCode(65 + index);
             r1FormattedBlocks += `\n--- RESPONSE ${letter} ---\n${res.content}\n`;
         });
 
-        let r2Prompt = r2Template.replace("{QUERY}", query);
-        if (r2Prompt.includes("{COUNCIL_RESPONSES_R1}")) {
-            r2Prompt = r2Prompt.replace("{COUNCIL_RESPONSES_R1}", r1FormattedBlocks);
-        } else {
-            r1Results.forEach((res, index) => {
-                const legacyTag = index === 0 ? "{R1_GEMINI}" : (index === 1 ? "{R1_CHATGPT}" : "{R1_CLAUDE}");
-                r2Prompt = r2Prompt.replace(legacyTag, res.content);
+        let r2Results = [];
+        let r2FormattedBlocks = "";
+
+        // ================= ROUND 2 (All Agents Cross-Critique) =================
+        if (allAgentRounds >= 2) {
+            setStepperStep(2);
+            statusText.textContent = "Round 2: Anonymizing responses & executing peer cross-critique...";
+
+            let r2Prompt = r2Template.replace(/{QUERY}/g, query);
+            if (r2Prompt.includes("{COUNCIL_RESPONSES_R1}")) {
+                r2Prompt = r2Prompt.replace(/{COUNCIL_RESPONSES_R1}/g, r1FormattedBlocks);
+            } else {
+                r1Results.forEach((res, index) => {
+                    const legacyTag = index === 0 ? "{R1_GEMINI}" : (index === 1 ? "{R1_CHATGPT}" : "{R1_CLAUDE}");
+                    r2Prompt = r2Prompt.replace(legacyTag, res.content);
+                });
+            }
+
+            const r2Promises = appSettings.council.map(async (member) => {
+                const startT = performance.now();
+                const text = await callOpenRouter(apiKey, member.model, sysPrompt, r2Prompt, abortController.signal);
+                const durationSec = ((performance.now() - startT) / 1000).toFixed(1);
+                return {
+                    memberId: member.id,
+                    memberName: member.name,
+                    model: member.model,
+                    color: member.color || "#38bdf8",
+                    content: text,
+                    duration: durationSec
+                };
+            });
+
+            r2Results = await Promise.all(r2Promises);
+            currentSession.round2 = r2Results;
+
+            r2Results.forEach((res) => {
+                appendAccordionItem({
+                    roundNum: 2,
+                    roundLabel: "Round 2: Revised Position & Critique",
+                    agentName: res.memberName,
+                    modelId: res.model,
+                    color: res.color,
+                    content: res.content,
+                    duration: res.duration + "s",
+                    isOpen: false
+                });
+            });
+
+            r2Results.forEach((res, index) => {
+                const letter = String.fromCharCode(65 + index);
+                r2FormattedBlocks += `\n--- PEER CRITIQUE ${letter} (${res.memberName}) ---\n${res.content}\n`;
             });
         }
 
-        const r2Promises = appSettings.council.map(async (member) => {
-            const startT = performance.now();
-            const text = await callOpenRouter(apiKey, member.model, sysPrompt, r2Prompt, abortController.signal);
-            const durationSec = ((performance.now() - startT) / 1000).toFixed(1);
-            return {
-                memberId: member.id,
-                memberName: member.name,
-                model: member.model,
-                color: member.color || "#38bdf8",
-                content: text,
-                duration: durationSec
-            };
-        });
+        let r3Results = [];
+        let r3FormattedBlocks = "";
 
-        const r2Results = await Promise.all(r2Promises);
-        currentSession.round2 = r2Results;
+        // ================= NEW ROUND 3 (All-Agent Review All Info & New Conclusion) =================
+        if (allAgentRounds >= 3) {
+            setStepperStep(3);
+            statusText.textContent = `Round 3: All Council Members reviewing arguments & forming revised conclusions...`;
 
-        r2Results.forEach((res) => {
-            appendAccordionItem({
-                roundNum: 2,
-                roundLabel: "Round 2: Revised Position",
-                agentName: res.memberName,
-                modelId: res.model,
-                color: res.color,
-                content: res.content,
-                duration: res.duration + "s",
-                isOpen: false
+            const deliberationBlocks = `=== ROUND 1: INITIAL PROPOSALS ===\n` + r1FormattedBlocks + `\n\n=== ROUND 2: PEER CROSS-CRITIQUES ===\n` + r2FormattedBlocks;
+
+            let r3Prompt = r3Template.replace(/{QUERY}/g, query);
+            r3Prompt = r3Prompt.replace(/{COUNCIL_RESPONSES_R1}/g, r1FormattedBlocks);
+            r3Prompt = r3Prompt.replace(/{COUNCIL_RESPONSES_R2}/g, r2FormattedBlocks);
+            r3Prompt = r3Prompt.replace(/{COUNCIL_DELIBERATIONS}/g, deliberationBlocks);
+
+            const r3Promises = appSettings.council.map(async (member) => {
+                const startT = performance.now();
+                const text = await callOpenRouter(apiKey, member.model, sysPrompt, r3Prompt, abortController.signal);
+                const durationSec = ((performance.now() - startT) / 1000).toFixed(1);
+                return {
+                    memberId: member.id,
+                    memberName: member.name,
+                    model: member.model,
+                    color: member.color || "#38bdf8",
+                    content: text,
+                    duration: durationSec
+                };
             });
-        });
 
-        // ================= ROUND 3 =================
-        setStepperStep(3);
-        statusText.textContent = `Round 3: ${appSettings.judge.name} synthesizing final verdict...`;
+            r3Results = await Promise.all(r3Promises);
+            currentSession.round3 = r3Results;
 
-        let r2FormattedBlocks = "";
-        r2Results.forEach((res, index) => {
-            r2FormattedBlocks += `\nCouncil Member ${index + 1} (${res.memberName}):\n${res.content}\n`;
-        });
+            r3Results.forEach((res) => {
+                appendAccordionItem({
+                    roundNum: 3,
+                    roundLabel: "Round 3: Revised Conclusion",
+                    agentName: res.memberName,
+                    modelId: res.model,
+                    color: res.color,
+                    content: res.content,
+                    duration: res.duration + "s",
+                    isOpen: false
+                });
+            });
 
-        let r3Prompt = r3Template.replace("{QUERY}", query);
-        if (r3Prompt.includes("{COUNCIL_RESPONSES_R2}")) {
-            r3Prompt = r3Prompt.replace("{COUNCIL_RESPONSES_R2}", r2FormattedBlocks);
+            r3Results.forEach((res, index) => {
+                r3FormattedBlocks += `\nCouncil Member ${index + 1} (${res.memberName}) - Revised Final Conclusion:\n${res.content}\n`;
+            });
+        }
+
+        // ================= FINAL ROUND (Chief Arbiter Synthesis) =================
+        const finalStepNum = allAgentRounds + 1;
+        setStepperStep(finalStepNum);
+        statusText.textContent = `Final Round: ${appSettings.judge.name} synthesizing final verdict...`;
+
+        let allDeliberations = "";
+        if (r1Results.length > 0) {
+            allDeliberations += `=== ROUND 1: INDEPENDENT ANALYSIS ===\n` + r1Results.map((r, i) => `[Member ${i+1}: ${r.memberName}]\n${r.content}`).join("\n\n") + "\n\n";
+        }
+        if (r2Results.length > 0) {
+            allDeliberations += `=== ROUND 2: PEER CROSS-CRITIQUE ===\n` + r2Results.map((r, i) => `[Member ${i+1}: ${r.memberName}]\n${r.content}`).join("\n\n") + "\n\n";
+        }
+        if (r3Results.length > 0) {
+            allDeliberations += `=== ROUND 3: REVISED CONCLUSIONS ===\n` + r3Results.map((r, i) => `[Member ${i+1}: ${r.memberName}]\n${r.content}`).join("\n\n") + "\n\n";
+        }
+
+        let finalPrompt = finalTemplate.replace(/{QUERY}/g, query);
+        finalPrompt = finalPrompt.replace(/{COUNCIL_DELIBERATIONS}/g, allDeliberations);
+
+        if (allAgentRounds >= 3) {
+            if (finalPrompt.includes("{COUNCIL_RESPONSES_R3}")) {
+                finalPrompt = finalPrompt.replace(/{COUNCIL_RESPONSES_R3}/g, r3FormattedBlocks);
+                finalPrompt = finalPrompt.replace(/{COUNCIL_RESPONSES_R2}/g, r2FormattedBlocks);
+            } else if (finalPrompt.includes("{COUNCIL_RESPONSES_R2}")) {
+                finalPrompt = finalPrompt.replace(/{COUNCIL_RESPONSES_R2}/g, r2FormattedBlocks + "\n\n=== REVISED FINAL CONCLUSIONS FROM COUNCIL MEMBERS ===\n" + r3FormattedBlocks);
+            }
+        } else if (allAgentRounds === 2) {
+            finalPrompt = finalPrompt.replace(/{COUNCIL_RESPONSES_R2}/g, r2FormattedBlocks);
         } else {
-            r2Results.forEach((res, index) => {
-                const legacyTag = index === 0 ? "{R2_GEMINI}" : (index === 1 ? "{R2_CHATGPT}" : "{R2_CLAUDE}");
-                r3Prompt = r3Prompt.replace(legacyTag, res.content);
-            });
+            finalPrompt = finalPrompt.replace(/{COUNCIL_RESPONSES_R2}|{COUNCIL_RESPONSES_R1}/g, r1FormattedBlocks);
         }
 
         const judgeStartT = performance.now();
@@ -2342,12 +3247,12 @@ async function startDebate() {
             apiKey, 
             appSettings.judge.model, 
             sysPrompt, 
-            r3Prompt, 
+            finalPrompt, 
             abortController.signal
         );
         const judgeDuration = ((performance.now() - judgeStartT) / 1000).toFixed(1);
 
-        currentSession.round3 = {
+        currentSession.finalRound = {
             judgeName: appSettings.judge.name,
             model: appSettings.judge.model,
             content: judgeText,
@@ -2355,8 +3260,8 @@ async function startDebate() {
         };
 
         appendAccordionItem({
-            roundNum: 3,
-            roundLabel: "Round 3: Chief Arbiter Final Consensus",
+            roundNum: "final",
+            roundLabel: "Final Round: Chief Arbiter Final Consensus",
             agentName: appSettings.judge.name,
             modelId: appSettings.judge.model,
             color: varJudgeColor(),
@@ -2366,7 +3271,7 @@ async function startDebate() {
             isJudge: true
         });
 
-        setStepperStep(4);
+        setStepperStep(allAgentRounds + 2);
         statusSpinner.style.display = "none";
         statusText.textContent = "Debate & Consensus Complete! Ready for Follow-Ups.";
         downloadMdBtn.disabled = false;
@@ -2499,7 +3404,8 @@ async function submitFollowUp() {
         thinkingEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    const consensusText = currentSession.round3 ? currentSession.round3.content : "(Consensus in progress)";
+    const finalData = currentSession.finalRound || (currentSession.round3 && !Array.isArray(currentSession.round3) ? currentSession.round3 : null);
+    const consensusText = finalData ? finalData.content : "(Consensus in progress)";
     
     // Construct debate-grounded context prompt
     const contextPrompt = `You participated in or are reviewing an AI Council debate on the topic: "${currentSession.query}"
@@ -2764,12 +3670,19 @@ function appendAccordionItem({ roundNum, roundLabel, agentName, modelId, color, 
     const summary = document.createElement('summary');
     summary.className = 'log-summary';
 
-    const judgeBadgeClass = isJudge ? 'judge-badge' : '';
-    const roundTagText = isJudge ? 'Consensus Verdict' : `Round ${roundNum}`;
+    let badgeClass = '';
+    let roundTagText = `Round ${roundNum}`;
+    if (isJudge || roundNum === 'final') {
+        badgeClass = 'judge-badge';
+        roundTagText = 'Final Round';
+    } else if (roundNum === 3) {
+        badgeClass = 'r3-badge';
+        roundTagText = 'Round 3';
+    }
 
     summary.innerHTML = `
         <div class="summary-left">
-            <span class="round-badge ${judgeBadgeClass}">${roundTagText}</span>
+            <span class="round-badge ${badgeClass}">${roundTagText}</span>
             <span style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: ${color || 'var(--accent)'};">
                 <span>${isJudge ? '👑' : '🤖'}</span>
                 <span>${escapeHtml(agentName)}</span>
@@ -2844,7 +3757,15 @@ function loadSession(sessionId) {
     document.getElementById("userQuery").value = found.query || "";
     document.getElementById("sysPrompt").value = found.sysPrompt || "";
     document.getElementById("r2Template").value = found.r2Template || "";
-    document.getElementById("r3Template").value = found.r3Template || "";
+    if (document.getElementById("r3Template")) {
+        document.getElementById("r3Template").value = found.r3Template || "";
+    }
+    if (document.getElementById("finalTemplate")) {
+        document.getElementById("finalTemplate").value = found.finalTemplate || (!Array.isArray(found.round3) && found.round3 ? found.r3Template : "") || "";
+    }
+
+    const allRounds = found.allAgentRounds || (Array.isArray(found.round3) ? 3 : 2);
+    setAllAgentRounds(allRounds, false);
 
     const outputCard = document.getElementById("outputCard");
     const accordionContainer = document.getElementById("resultsAccordionContainer");
@@ -2877,7 +3798,7 @@ function loadSession(sessionId) {
         found.round2.forEach(res => {
             appendAccordionItem({
                 roundNum: 2,
-                roundLabel: "Round 2: Revised Position",
+                roundLabel: "Round 2: Critique & Cross-Examination",
                 agentName: res.memberName,
                 modelId: res.model,
                 color: res.color,
@@ -2888,15 +3809,31 @@ function loadSession(sessionId) {
         });
     }
 
-    if (found.round3) {
+    if (found.round3 && Array.isArray(found.round3)) {
+        found.round3.forEach(res => {
+            appendAccordionItem({
+                roundNum: 3,
+                roundLabel: "Round 3: Revised Conclusions",
+                agentName: res.memberName,
+                modelId: res.model,
+                color: res.color,
+                content: res.content,
+                duration: res.duration || "completed",
+                isOpen: false
+            });
+        });
+    }
+
+    const finalData = found.finalRound || (found.round3 && !Array.isArray(found.round3) ? found.round3 : null);
+    if (finalData) {
         appendAccordionItem({
-            roundNum: 3,
-            roundLabel: "Round 3: Chief Arbiter Final Consensus",
-            agentName: found.round3.judgeName || "Arbiter",
-            modelId: found.round3.model,
+            roundNum: 'final',
+            roundLabel: "Final Round: Chief Arbiter Synthesis",
+            agentName: finalData.judgeName || "Chief Arbiter",
+            modelId: finalData.model,
             color: varJudgeColor(),
-            content: found.round3.content,
-            duration: found.round3.duration || "completed",
+            content: finalData.content,
+            duration: finalData.duration || "completed",
             isOpen: true,
             isJudge: true
         });
@@ -2904,7 +3841,8 @@ function loadSession(sessionId) {
         const sessionJsonBtn = document.getElementById("downloadSessionJsonBtn");
         if (sessionJsonBtn) sessionJsonBtn.disabled = false;
         followUpSection.style.display = "block";
-        setStepperStep(4);
+        const totalSteps = allRounds + 1;
+        setStepperStep(totalSteps);
     }
 
     renderFollowUpTargetPills();
@@ -3058,7 +3996,8 @@ function downloadCurrentSessionJSON() {
 }
 
 function downloadConsensusMarkdown() {
-    if (!currentSession || !currentSession.round3) return;
+    const finalData = currentSession ? (currentSession.finalRound || (!Array.isArray(currentSession.round3) ? currentSession.round3 : null)) : null;
+    if (!currentSession || !finalData) return;
 
     let md = `# AI Council Deliberation Report\n\n`;
     md += `**Date:** ${new Date(currentSession.createdAt).toLocaleString()}\n`;
@@ -3066,8 +4005,17 @@ function downloadConsensusMarkdown() {
     md += `**Chief Arbiter:** ${currentSession.judge.name} (${currentSession.judge.model})\n`;
     md += `**Council:** ${currentSession.council.map(c => c.name + " (" + c.model + ")").join(", ")}\n\n`;
     md += `---\n\n`;
+
+    if (currentSession.round3 && Array.isArray(currentSession.round3) && currentSession.round3.length > 0) {
+        md += `## Round 3: Council Revised Conclusions\n\n`;
+        currentSession.round3.forEach(res => {
+            md += `### 🤖 ${res.memberName} (${res.model}):\n${res.content}\n\n`;
+        });
+        md += `---\n\n`;
+    }
+
     md += `## Final Consensus & Synthesis\n\n`;
-    md += `${currentSession.round3.content}\n\n`;
+    md += `${finalData.content}\n\n`;
 
     if (currentSession.followUps && currentSession.followUps.length > 0) {
         md += `---\n\n## Interactive Follow-Up Deliberations\n\n`;
@@ -3199,6 +4147,10 @@ window.addEventListener("keydown", (e) => {
         const modal = document.getElementById("councilModal");
         if (modal && modal.classList.contains("open")) {
             closeCouncilModal();
+        }
+        const pmModal = document.getElementById("presetManagerModal");
+        if (pmModal && pmModal.classList.contains("open")) {
+            closePresetManagerModal();
         }
     }
 });
